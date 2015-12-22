@@ -3,7 +3,7 @@ A scala library for dynamic data
 
 Heisenberg provides 
 * Selective parsing/validation without modifying/dropping the source data
-* Read any data source viewable as Map[String, Any] to a thin POJO
+* Read any data source Map[String, Any] <-> POJO
 * Write objects back to Map[String, Any] without loss of information
 * Support for custom field types 
 * Automatic data model migration (field name changes, semantic changes etc.)
