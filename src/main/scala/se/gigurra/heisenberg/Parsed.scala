@@ -4,7 +4,7 @@ import MapData.SourceData
 
 import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
-import scala.reflect.ClassTag
+import scala.reflect.runtime.universe._
 
 trait Parsed[T <: Parsed[T]] extends MapData { _: T =>
 
@@ -54,7 +54,7 @@ trait Parsed[T <: Parsed[T]] extends MapData { _: T =>
 
   def flatten: SourceData = flattened
 
-  def marshal(sources: MapData*) = schema.marshal(sources:_*)
+  def marshal(sources: MapData*)(implicit tag: WeakTypeTag[T]) = schema.marshal(sources:_*)
 
   override def toString: String = flatten.toString
 
@@ -110,10 +110,10 @@ object Parsed {
     }
   }
 
-  implicit def mapDataParser[T <: Parsed[T] : MapParser: ClassTag] = new MapDataParser[T] {
+  implicit def mapDataParser[T <: Parsed[T] : MapParser: WeakTypeTag] = new MapDataParser[T] {
     override def parse(field: Any): T = field match {
       case _: Map[_, _] => MapParser.parse[T](field.asInstanceOf[Map[String, Any]])
-      case _ => throw MapDataParser.WrongType(expect = s"Map[String, Any] (to produce a ${scala.reflect.classTag[T].runtimeClass.getSimpleName})", was = MapDataParser.clsOf(field))
+      case _ => throw MapDataParser.WrongType(expect = s"Map[String, Any] (to produce a ${weakTypeTag[T].tpe})", was = MapDataParser.clsOf(field))
     }
   }
 

@@ -1,5 +1,8 @@
 package se.gigurra.heisenberg
 
+import scala.reflect.runtime.universe._
+import scala.util.{Failure, Success, Try}
+
 trait MapDataParser[T] {
   def parse(field: Any): T
 }
@@ -108,31 +111,44 @@ object MapDataParser {
     }
   }
 
-  implicit def parsingSeq[T: MapDataParser] = new MapDataParser[Seq[T]] {
+  implicit def parsingSeq[T: MapDataParser : WeakTypeTag] = new MapDataParser[Seq[T]] {
     val elementTransformer = (d: Any) => MapDataParser.parse[T](d, "[seq_element]")
     def parse(field: Any) = {
       field match {
         case field: Iterable[_] => field.map(elementTransformer).toSeq
-        case _ => throw WrongType(expect = "Seq[T]", was = clsOf(field))
+        case _ => throw WrongType(expect = weakTypeTag[Seq[T]].tpe.toString, was = clsOf(field))
       }
     }
   }
 
-  implicit def parsingSet[T: MapDataParser] = new MapDataParser[Set[T]] {
+  implicit def parsingEither[Left: MapDataParser : WeakTypeTag, Right: MapDataParser : WeakTypeTag] = new MapDataParser[Either[Left, Right]] {
+    def parse(field: Any) = {
+      Try(MapDataParser.parse[Left](field, "[left_either]")) match {
+        case Success(result) => Left[Left, Right](result)
+        case Failure(_) => Try(MapDataParser.parse[Right](field, "[right_either]")) match {
+          case Success(result) => Right[Left, Right](result)
+          case Failure(_) =>
+            throw WrongType(expect = weakTypeTag[Either[Left, Right]].tpe.toString, was = clsOf(field))
+        }
+      }
+    }
+  }
+
+  implicit def parsingSet[T: MapDataParser : WeakTypeTag] = new MapDataParser[Set[T]] {
     val elementTransformer = (d: Any) => MapDataParser.parse[T](d, "{set_element}")
     def parse(field: Any) = {
       field match {
         case field: Iterable[_] => field.map(elementTransformer).toSet
-        case _ => throw WrongType(expect = "Set[T]", was = clsOf(field))
+        case _ => throw WrongType(expect = weakTypeTag[Set[T]].tpe.toString, was = clsOf(field))
       }
     }
   }
 
-  implicit def parsingMap[T: MapDataParser] = new MapDataParser[Map[String, T]] {
+  implicit def parsingMap[T: MapDataParser : WeakTypeTag] = new MapDataParser[Map[String, T]] {
     def parse(field: Any) = {
       field match {
         case field: Map[_, _] => field.asInstanceOf[Map[String, Any]].map(kv => kv._1 -> MapDataParser.parse[T](kv._2, kv._1))
-        case _ => throw WrongType(expect = "Map[String, Any]", was = clsOf(field))
+        case _ => throw WrongType(expect = weakTypeTag[Map[String, T]].tpe.toString, was = clsOf(field))
       }
     }
   }

@@ -1,6 +1,5 @@
 package se.gigurra.heisenberg
 
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 trait MapParser[T] {
@@ -9,17 +8,20 @@ trait MapParser[T] {
 
 object MapParser {
 
-  def parse[T: MapParser : ClassTag](data: Map[String, Any]): T = {
+  def parse[T: MapParser : WeakTypeTag](data: Map[String, Any]): T = {
     try {
       implicitly[MapParser[T]].parse(data)
     } catch {
       case e: MapDataParser.ParseError =>
-        e.path = scala.reflect.classTag[T].runtimeClass.getSimpleName :: e.path
+        val tag = weakTypeTag[T]
+        val mirror = tag.mirror
+        val clazz = mirror.runtimeClass(tag.tpe.typeSymbol.asClass)
+        e.path = clazz.getSimpleName :: e.path
         throw e
     }
   }
 
-  def parseSingleFieldObject[T: MapDataParser : ClassTag: TypeTag](data: Map[String, Any], fieldName: String = "data"): T = {
+  def parseSingleFieldObject[T: MapDataParser : WeakTypeTag](data: Map[String, Any], fieldName: String = "data"): T = {
 
     data.get(fieldName) match {
       case Some(t) =>
@@ -31,7 +33,7 @@ object MapParser {
             throw e
         }
       case None =>
-        throw new MapDataParser.MissingField(fieldName, implicitly[TypeTag[T]].tpe.toString) {
+        throw new MapDataParser.MissingField(fieldName, implicitly[WeakTypeTag[T]].tpe.toString) {
           path = "SingleFieldObject" :: path
         }
     }

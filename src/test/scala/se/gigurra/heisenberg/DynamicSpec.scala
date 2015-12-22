@@ -143,7 +143,7 @@ class DynamicSpec
             .as[UpdatedTestType]
         }
 
-        override val parser = Migration(UpdatedTestType.defaultParser, SimpleTestType.parser, migrator)
+        override lazy val parser = Migration(UpdatedTestType.defaultParser, SimpleTestType.parser, migrator)
       }
       case class UpdatedTestType(source: SourceData)
         extends Parsed[UpdatedTestType] {
@@ -253,17 +253,17 @@ class DynamicSpec
 
     "Forgetting to parse a field should throw when flattening" in {
 
-      object SomeTestType extends Schema[SomeTestType] {
+      object X extends Schema[X] {
         val a = required[Seq[SimpleTestType]]("a")
         val b = required[Seq[SimpleTestType]]("b", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
       }
 
-      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
-        def schema = SomeTestType
+      case class X(source: SourceData) extends Parsed[X] {
+        def schema = X
         val df = parse(schema.b)
       }
 
-      val x = SomeTestType(Map.empty)
+      val x = X(Map.empty)
       val result = Try(x.flatten)
       result shouldBe a[Failure[_]]
       result.failed.get shouldBe a[InvalidSchemaUse]

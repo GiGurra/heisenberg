@@ -3,7 +3,7 @@ package se.gigurra.heisenberg
 import se.gigurra.heisenberg.MapData.SourceData
 
 import scala.language.implicitConversions
-import scala.reflect.ClassTag
+import scala.reflect.runtime.universe._
 
 case class PureMapData(source: SourceData = Map.empty) extends MapData
 
@@ -47,9 +47,9 @@ trait MapData {
     PureMapData(source - field.name)
   }
 
-  def as[T : MapParser : ClassTag]: T = MapParser.parse[T](source)
+  def as[T : MapParser : WeakTypeTag]: T = MapParser.parse[T](source)
 
-  def as[T <: Parsed[T] : MapParser : ClassTag](schema: Schema[T]): T = as[T]
+  def as[T <: Parsed[T] : MapParser : WeakTypeTag](schema: Schema[T]): T = as[T]
 
 }
 

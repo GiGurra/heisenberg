@@ -5,10 +5,9 @@ import MapData.SourceData
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe.TypeTag
+import scala.reflect.runtime.universe.WeakTypeTag
 
-abstract class Schema[ObjectType <: Parsed[ObjectType] : ClassTag] {
+abstract class Schema[ObjectType <: Parsed[ObjectType] : WeakTypeTag] {
 
   private val _fields = new ArrayBuffer[Field[Any]]
   private val _fieldsByName = new mutable.HashMap[String, Field[Any]]()
@@ -24,11 +23,11 @@ abstract class Schema[ObjectType <: Parsed[ObjectType] : ClassTag] {
     f
   }
 
-  protected def required[T: TypeTag : MapDataParser : MapDataProducer](name: String, default: => T = null.asInstanceOf[T]): FieldRequired[T] = {
+  protected def required[T: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => T = null.asInstanceOf[T]): FieldRequired[T] = {
     viewField[T, FieldRequired[T]](FieldRequired(name, Option(default)))
   }
 
-  protected def optional[T: TypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[T] = {
+  protected def optional[T: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[T] = {
     viewField[Option[T], FieldOption[T]](FieldOption(name))
   }
 
