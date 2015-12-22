@@ -2,8 +2,8 @@
 A scala library for dynamic data
 
 Heisenberg solves, without loss of information, the problems of
-* Persistence of partially defined and evolving data types
-* Routing of partially defined and evolving data types
+* Persistence of partially defined and evolving data
+* Routing of partially defined and evolving data
 * Data migration and versioning
 * Data model consolidation
 
