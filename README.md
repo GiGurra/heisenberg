@@ -102,6 +102,34 @@ case class MyInner ..
 
 ```
 
+### Custom types
+
+```scala
+object Event extends Schema[Event] {
+
+ // to handle custom types, we must provide a producer and a parser
+ implicit val producer = (t: Instant) => i.toString
+ implicit val parser = (x: Any) => x match {
+  case x: String => Instant.parse(x) // iso timestamp string
+  case x: Number => new Instant(x, 0) // epoch millis
+  case x => throw MapDataParser.WrongType(expect = "String or Number for Instant", actual = x.getClass)
+ }
+
+ val timeStamp = required[Instant]("log_time", default = Instant.now())
+ val content = optional[String]("content")
+}
+case class Event private(root: Map[String, Any]) extends Parsed[Event] {
+ val timeStamp = parse(schema.timeStamp)
+ val content = parse(schema.content)
+ def schema = Event
+}
+
+// Declaring your other class in the same way ..
+object MyInner ..
+case class MyInner ..
+
+```
+
 
 ## Etc
 
