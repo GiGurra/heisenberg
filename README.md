@@ -18,7 +18,7 @@ Heisenberg provides
 * Custom arbitrary data validation (self-contained)
 * Simple API
 
-Heisenberg works well with dynamic data format, such as
+Heisenberg works well with dynamic data formats, such as
 * Json (e.g. json4s, ..)
 * Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
 * Any Key-Value store, really.. 
