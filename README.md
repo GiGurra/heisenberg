@@ -4,7 +4,6 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 * Heisenberg is very much WIP.. Examples & doc may come later.
   * All suggestions appreciated
 
-
 ## Heisenberg helps with (w/o data loss)
 * Persistence of partially defined and evolving data
 * Routing of partially defined and evolving data
@@ -30,6 +29,56 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 * Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
 * Any Key-Value data, really.. 
   * currently anything that can be viewed as Map[String, Any]
+
+
+## Examples
+
+Below are some simple examples showing how to use Heisenberg
+
+
+### Parsing dynamic data
+
+```scala
+
+val data = Map("a" -> "lalala", "b" -> 123, "extra_data" -> Seq(2,3,4))
+
+object MyType extends Schema[MyType] {
+ val foo = required[String]("a", default = "foo_default") // Creates a Field of type String
+ val bar = optional[Int]("b") // Creates a Field of type Int
+}
+
+case class MyType(source: Map[String, Any]) extends Parsed[MyType] {
+ val foo = parse(schema.foo) // String
+ val bar = parse(schema.bar) // Option[Int]
+ def schema = MyType
+ 
+ // You can put constraints either in the schema fields, or here directly
+ require(bar.forall(_ > 0), "bar must be positive")
+}
+
+val instance = MyType.parse(data) // returns object of type MyType
+
+```
+
+
+### Producing dynamic data
+
+```scala
+
+val data = Map("a" -> "lalala", "b" -> 123, "extra_data" -> Seq(2,3,4))
+
+// The same as above
+object MyType ..
+case class MyType ..
+
+val instance = MyType.parse(data) // returns object of type MyType
+val dataBack = instance.flatten // Map[String, Any] - Including default values if any were used
+
+// assuming we haven't added anything through e.g. default values:
+assert(data == databack)
+
+
+```
 
 
 ## Etc
