@@ -3,9 +3,8 @@ A scala library for dynamic data
 
 Heisenberg provides 
 * Selective parsing/validation without modifying/dropping the source data
-* Read any data source Map[String, Any] <-> POJO
-* Write objects back to Map[String, Any] without loss of information
-* Support for custom field types 
+* Mapping of Map[String, Any] <-> POJO without loss of information
+* Support for custom field types
 * Automatic data model migration (field name changes, semantic changes etc.)
 * Type classes instead of relection
 * Simple API
@@ -14,5 +13,7 @@ Heisenberg is built using type classes which specify how each field should be ob
 
 Building a simple object persistence layer or routing service where only a subset of information needs to be parsed? 
 No problem - Just specify those fields you're interested in. 
+
+Got some FancyType class that you don't want to convert to a Heisenberg type but still want to have in some of your Heisenberg fields? Just provide a MapDataProducer[FancyType] and MapDataParser[FancyType] and you're good to go!
 
 The name Heisenberg comes from wanting to observe as little of the data as possible, so as to not constrain whoever has the real model/definition of the data and let them evolve their model freely. 
