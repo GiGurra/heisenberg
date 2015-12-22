@@ -10,7 +10,7 @@ Heisenberg helps solve, without loss of information, the problems of
 Heisenberg provides
 * Selective parsing/validation without modifying/dropping the source data
 * Mapping of [key,value] <-> POJO without loss of information
-* Support for custom field types
+* Support for custom types
 * Automatic data model migration (field name changes, semantic changes etc.)
 * Type classes instead of relection
 * No code generation (just pure Scala)
