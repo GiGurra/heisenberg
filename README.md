@@ -12,7 +12,7 @@ Heisenberg provides
 * Mapping of [key,value] <-> POJO without loss of information
 * Support for custom types & representations
 * Automatic data model migration (field name changes, semantic changes etc.)
-* Type classes instead of relection
+* Type classes instead of reflection
 * No code generation (just pure Scala)
 * Simple API
 
