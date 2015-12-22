@@ -14,7 +14,7 @@ Heisenberg provides
 * Automatic data model migration (field name changes, semantic changes etc.)
 * Type classes instead of reflection
 * No code generation (just pure Scala)
-* Arbitrary self-contained validation/parsing constraints
+* Custom arbitrary validation/parsing constraints (self-contained)
 * Simple API
 
 Heisenberg works well with dynamic data format, such as
