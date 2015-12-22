@@ -28,7 +28,7 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
 ## Compatibility
 * Json (e.g. json4s, ..)
 * Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
-* Any Key-Value store, really.. 
+* Any Key-Value data, really.. 
   * currently anything that can be viewed as Map[String, Any]
 
 
