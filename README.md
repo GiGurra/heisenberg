@@ -106,8 +106,7 @@ case class MyInner ..
 
 ```scala
 object Event extends Schema[Event] {
-
- // to handle custom types, we must provide a producer and a parser
+ // to handle custom types, we must provide a producer and a parser. Not doing so will cause the compilation to fail
  implicit val producer = (t: Instant) => i.toString // Or expose an instance of the MapDataProducer[Instant] trait instead
  implicit val parser = (x: Any) => x match { // Or expose an instance of the MapDataParser[Instant] trait instead
   case x: String => Instant.parse(x) // iso timestamp string
