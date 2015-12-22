@@ -17,7 +17,6 @@ Heisenberg provides
 * Simple API
 
 Heisenberg works well with dynamic data format, such as
-* Xml 
 * Json (e.g. json4s, ..)
 * Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
 * Any Key-Value store, really.. 
