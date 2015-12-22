@@ -27,6 +27,6 @@ Heisenberg is built using type classes which specify how each field should be ob
 
 Building a simple object persistence layer or routing service where only a subset of information needs to be parsed - *but everything still needs to be kept intact*? - No problem - Just specify those fields you're interested in analyzing.
 
-Got some FancyType class that you don't want to convert to a Heisenberg type but still want to have in some of your Heisenberg fields? Just provide a MapDataProducer[FancyType] and MapDataParser[FancyType] and you're good to go!
+Got some FancyType that you don't want to rewrite to a Heisenberg type but still want to mix in? Just provide a MapDataProducer[FancyType] and MapDataParser[FancyType] type class and you're good to go!
 
 The name Heisenberg comes from wanting to observe as little of the data as possible, so as to not constrain whoever has the real model/definition of the data and let them evolve their model freely. 
