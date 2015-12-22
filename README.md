@@ -108,8 +108,8 @@ case class MyInner ..
 object Event extends Schema[Event] {
 
  // to handle custom types, we must provide a producer and a parser
- implicit val producer = (t: Instant) => i.toString
- implicit val parser = (x: Any) => x match {
+ implicit val producer = (t: Instant) => i.toString // Or expose an instance of the MapDataProducer[Instant] trait instead
+ implicit val parser = (x: Any) => x match { // Or expose an instance of the MapDataParser[Instant] trait instead
   case x: String => Instant.parse(x) // iso timestamp string
   case x: Number => new Instant(x, 0) // epoch millis
   case x => throw MapDataParser.WrongType(expect = "String or Number for Instant", actual = x.getClass)
