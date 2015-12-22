@@ -1,5 +1,5 @@
 # Heisenberg
-A scala library for dynamic [key,value] data
+A scala library for dynamic [key,value] data - Get the best of both dynamic and static typing
 
 Heisenberg helps solve, without loss of information, the problems of
 * Persistence of partially defined and evolving data
