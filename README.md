@@ -124,10 +124,6 @@ case class Event private(root: Map[String, Any]) extends Parsed[Event] {
  def schema = Event
 }
 
-// Declaring your other class in the same way ..
-object MyInner ..
-case class MyInner ..
-
 ```
 
 
