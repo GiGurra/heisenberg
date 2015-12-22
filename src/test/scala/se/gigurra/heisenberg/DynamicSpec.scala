@@ -171,7 +171,12 @@ class DynamicSpec
             .as[UpdatedTestType]
         }
 
-        override lazy val parser = Migration.parser(UpdatedTestType.defaultParser, SimpleTestType.parser, migrator)
+        override lazy val parser = Migration.parser(
+          UpdatedTestType.defaultParser,
+          SimpleTestType.parser,
+          migrator,
+          warnOnMigrate = true
+        )
       }
       case class UpdatedTestType(source: SourceData)
         extends Parsed[UpdatedTestType] {

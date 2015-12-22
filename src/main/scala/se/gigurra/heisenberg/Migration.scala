@@ -4,6 +4,7 @@ import java.util.logging.Logger
 
 import MapData.SourceData
 
+import scala.reflect.runtime.universe._
 import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
@@ -13,27 +14,29 @@ object Migration {
 
   type Migrator[New, Old] = Old => New
 
-  def parser[New, Old](newParser: MapParser[New],
-                       oldParser: MapParser[Old],
-                       migrator: Migrator[New, Old],
-                       warnOnMigrate: Boolean = true): MigratingMapParser[New, Old] = {
-    new MigratingMapParser(newParser, oldParser, warnOnMigrate)(migrator)
+  def parser[New: WeakTypeTag, Old: WeakTypeTag](newParser: MapParser[New],
+                                                 oldParser: MapParser[Old],
+                                                 migrator: Migrator[New, Old],
+                                                 warnOnMigrate: Boolean = false): MigratingMapParser[New, Old] = {
+    new MigratingMapParser(newParser, oldParser, warnOnMigrate, migrator)
   }
 
-  case class MigratingMapParser[New, Old](_new: MapParser[New],
-                                          _old: MapParser[Old],
-                                          warnOnMigrate: Boolean)
-                                         (implicit m: Migrator[New, Old]) extends MapParser[New] {
+  case class MigratingMapParser[New: WeakTypeTag, Old: WeakTypeTag](_new: MapParser[New],
+                                                                    _old: MapParser[Old],
+                                                                    warnOnMigrate: Boolean,
+                                                                    migrator: Migrator[New, Old]) extends MapParser[New] {
 
-    def -->[Newer](newer: MapParser[Newer])(implicit m2: Migrator[Newer, New]): MigratingMapParser[Newer, New] = {
-      MigratingMapParser[Newer, New](newer, this, warnOnMigrate)
+    def -->[Newer](newer: MapParser[Newer])(implicit m2: Migrator[Newer, New], tag: WeakTypeTag[Newer]): MigratingMapParser[Newer, New] = {
+      MigratingMapParser[Newer, New](newer, this, warnOnMigrate, m2)
     }
 
     override def parse(data: SourceData): New = {
       Try(_new.parse(data)) match {
         case Success(result) => result
         case Failure(eNew) if !(_new eq _old) =>
-          Try(implicitly[Migrator[New, Old]].apply(_old.parse(data))) match {
+          if (warnOnMigrate)
+            logger.warning(s"Attempting to migrate data from ${weakTypeTag[Old].tpe} -> ${weakTypeTag[New].tpe}")
+          Try(migrator.apply(_old.parse(data))) match {
             case Success(result) => result
             case Failure(e: MigrationFailed) =>
               e.attemptErrors = eNew +: e.attemptErrors
@@ -45,8 +48,11 @@ object Migration {
     }
   }
 
-  implicit def sameTypeMigrator[T]: Migrator[T, T] = new Migrator[T, T] { override def apply(t: T): T = t }
-  implicit def parser2migratingParser[T](p: MapParser[T]): MigratingMapParser[T,T] = MigratingMapParser(p, p, warnOnMigrate = true)
+  implicit def sameTypeMigrator[T]: Migrator[T, T] = new Migrator[T, T] {
+    override def apply(t: T): T = t
+  }
+
+  implicit def parser2migratingParser[T: WeakTypeTag](p: MapParser[T]): MigratingMapParser[T, T] = MigratingMapParser(p, p, warnOnMigrate = true, sameTypeMigrator[T])
 
 }
 
