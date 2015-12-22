@@ -1,17 +1,15 @@
 *.class
 *.log
-
-# sbt specific
+.cache/
 .cache
-.history
+.history/
+.idea/
 .lib/
 dist/*
 target/
 lib_managed/
 src_managed/
+src_generated/
 project/boot/
 project/plugins/project/
-
-# Scala-IDE specific
-.scala_dependencies
-.worksheet
+core/src/main/java/se/gigurra/wallace
