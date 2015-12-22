@@ -13,32 +13,32 @@ class DynamicSpec
   with Matchers
   with OneInstancePerTest {
 
-  case class MyMap(source: SourceData) extends Parsed[MyMap] {
-    def schema = MyMap
+  case class SimpleTestType(source: SourceData) extends Parsed[SimpleTestType] {
+    def schema = SimpleTestType
     val req_str = parse(schema.req_str)
     val req_str_w_def = parse(schema.req_str_w_def)
   }
 
-  object MyMap extends Schema[MyMap] {
+  object SimpleTestType extends Schema[SimpleTestType] {
     val req_str = required[String]("a")
     val req_str_w_def = required[String]("b", "mydefault")
   }
 
-  case class MyMapRec(source: SourceData) extends Parsed[MyMapRec] {
-    def schema = MyMapRec
+  case class NestedTestType(source: SourceData) extends Parsed[NestedTestType] {
+    def schema = NestedTestType
     val rq = parse(schema.rq)
     val df = parse(schema.df)
   }
 
-  object MyMapRec extends Schema[MyMapRec] {
-    val rq = required[Seq[MyMap]]("rq")
-    val df = required[Seq[MyMap]]("df", Seq(MyMap.marshal(MyMap.req_str -> "123")))
+  object NestedTestType extends Schema[NestedTestType] {
+    val rq = required[Seq[SimpleTestType]]("rq")
+    val df = required[Seq[SimpleTestType]]("df", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
   }
 
   "Dynamic" should {
 
     "parse MyDynamic from Map" in {
-      import MyMap._
+      import SimpleTestType._
       val source = MapData(req_str -> "Hello", req_str_w_def -> "You too").source
       val instance = parse(source)
       instance.req_str shouldBe "Hello"
@@ -46,7 +46,7 @@ class DynamicSpec
     }
 
     "preserve extra data in source and flattened formats" in {
-      import MyMap._
+      import SimpleTestType._
 
       val sourceData = Map(req_str.name -> "Hello", req_str_w_def.name -> "You too", "extra_field" -> "I'm here!")
 
@@ -59,7 +59,7 @@ class DynamicSpec
     }
 
     "fail to parse if missing required data" in {
-      import MyMap._
+      import SimpleTestType._
       val source = MapData(req_str_w_def -> "You too").source
       val result = Try(parse(source))
       result shouldBe a[Failure[_]]
@@ -69,7 +69,7 @@ class DynamicSpec
     }
 
     "fail to parse if wrong field type" in {
-      import MyMap._
+      import SimpleTestType._
       val source = Map(req_str.name -> "Hello", req_str_w_def.name -> 2)
       val result = Try(parse(source))
       result shouldBe a[Failure[_]]
@@ -79,7 +79,7 @@ class DynamicSpec
     }
 
     "view default values when source is missing data" in {
-      import MyMap._
+      import SimpleTestType._
       val source = MapData(req_str -> "Hello").source
       val instance = parse(source)
       instance.req_str shouldBe "Hello"
@@ -87,19 +87,19 @@ class DynamicSpec
     }
 
     "flatten with default values" in {
-      import MyMap._
+      import SimpleTestType._
       val source = MapData(req_str -> "Hello").source
       val instance = parse(source)
       instance.flatten shouldBe MapData(req_str -> "Hello", req_str_w_def -> "mydefault").source
     }
 
     "flatten with default values recursively" in {
-      import MyMap._
-      import MyMapRec._
+      import SimpleTestType._
+      import NestedTestType._
       val innerSource1 = MapData(req_str -> "HelloInner1").source
       val innerSource2 = MapData(req_str -> "HelloInner2", req_str_w_def -> "123321").source
       val source = Map(rq.name -> Seq(innerSource1, innerSource2))
-      val instance = MyMapRec.parse(source)
+      val instance = NestedTestType.parse(source)
       val reference = Map(
         rq.name -> Seq(Map(req_str.name -> "HelloInner1", req_str_w_def.name -> "mydefault"), Map(req_str.name -> "HelloInner2", req_str_w_def.name -> "123321")),
         df.name -> Seq(Map(req_str.name -> "123", req_str_w_def.name -> "mydefault"))
@@ -108,12 +108,12 @@ class DynamicSpec
     }
 
     "fail parse when inner data is invalid" in {
-      import MyMap._
-      import MyMapRec._
+      import SimpleTestType._
+      import NestedTestType._
       val innerSource1 = MapData(req_str -> "HelloInner1").source
       val innerSource2 = MapData(/*req_str -> "HelloInner2",*/ req_str_w_def -> "123321").source
       val source = Map(rq.name -> Seq(innerSource1, innerSource2))
-      val result = Try(MyMapRec.parse(source))
+      val result = Try(NestedTestType.parse(source))
 
       result shouldBe a [Failure[_]]
       result.failed.get shouldBe a[MapDataParser.MissingField]
@@ -122,7 +122,7 @@ class DynamicSpec
     }
 
     "produce maps with default values included for missing source values" in {
-      import MyMap._
+      import SimpleTestType._
       val source = MapData(req_str -> "Hello").source
       val instance = parse(source)
       MapProducer.produce(instance) shouldBe MapData(req_str -> "Hello", req_str_w_def -> "mydefault").source
@@ -130,36 +130,36 @@ class DynamicSpec
 
     "automatically migrate old data to new schemas (=time-travel: forwards)" in {
 
-      object MyMap2 extends Schema[MyMap2] {
+      object UpdatedTestType extends Schema[UpdatedTestType] {
         val req_str = required[String]("ax")
         val req_str_w_def = required[String]("bx", "mydefaultx")
 
         import MapData._
 
-        val migrator: Migrator[MyMap2, MyMap] = { old =>
+        val migrator: Migrator[UpdatedTestType, SimpleTestType] = { old =>
           old.flatten
-            .rename(MyMap.req_str -> MyMap2.req_str)
-            .rename(MyMap.req_str_w_def -> MyMap2.req_str_w_def)
-            .as[MyMap2]
+            .rename(SimpleTestType.req_str -> UpdatedTestType.req_str)
+            .rename(SimpleTestType.req_str_w_def -> UpdatedTestType.req_str_w_def)
+            .as[UpdatedTestType]
         }
 
-        override val parser = Migration(defaultParser, MyMap.parser, migrator)
+        override val parser = Migration(UpdatedTestType.defaultParser, SimpleTestType.parser, migrator)
       }
-      case class MyMap2(source: SourceData)
-        extends Parsed[MyMap2] {
-        def schema = MyMap2
+      case class UpdatedTestType(source: SourceData)
+        extends Parsed[UpdatedTestType] {
+        def schema = UpdatedTestType
         val req_str = parse(schema.req_str)
         val req_str_w_def = parse(schema.req_str_w_def)
       }
 
-      val source = MapData(MyMap.req_str -> "Hello").source
-      val m1 = MyMap.parse(source)
+      val source = MapData(SimpleTestType.req_str -> "Hello").source
+      val m1 = SimpleTestType.parse(source)
       m1.req_str shouldBe "Hello"
       m1.req_str_w_def shouldBe "mydefault"
 
 
-      val m2FromMigrator = MyMap2.migrator.apply(m1)
-      val m2Parsed = MyMap2.parse(source)
+      val m2FromMigrator = UpdatedTestType.migrator.apply(m1)
+      val m2Parsed = UpdatedTestType.parse(source)
 
       m2FromMigrator shouldBe m2Parsed
       m2Parsed.source.contains("ax") shouldBe true
@@ -171,17 +171,17 @@ class DynamicSpec
 
     "throw if trying to parse a field more than once" in {
 
-      object X extends Schema[X] {
-        val b = required[Seq[MyMap]]("b", Seq(MyMap.marshal(MyMap.req_str -> "123")))
+      object SomeTestType extends Schema[SomeTestType] {
+        val b = required[Seq[SimpleTestType]]("b", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
       }
 
-      case class X(source: SourceData) extends Parsed[X] {
-        def schema = X
+      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
+        def schema = SomeTestType
         val df1 = parse(schema.b)
         val df2 = parse(schema.b)
       }
 
-      val result = Try(X(Map.empty))
+      val result = Try(SomeTestType(Map.empty))
       result shouldBe a[Failure[_]]
       result.failed.get shouldBe a[InvalidSchemaUse]
     }
@@ -217,17 +217,17 @@ class DynamicSpec
 
     "fail to create schema with duplicate field names" in {
 
-      case class X(source: SourceData) extends Parsed[X] {
-        def schema = xSchema
+      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
+        def schema = SomeSchema
       }
 
-      lazy val xSchema = new Schema[X] {
+      lazy val SomeSchema = new Schema[SomeTestType] {
         val a1 = optional[String]("a")
         val a2 = optional[String]("a")
-        def apply(d: Map[String, Any]): X = marshal()
+        def apply(d: Map[String, Any]): SomeTestType = marshal()
       }
 
-      val result = Try(xSchema)
+      val result = Try(SomeSchema)
       result shouldBe a [Failure[_]]
       result.failed.get shouldBe a [InvalidSchemaUse]
 
@@ -235,17 +235,17 @@ class DynamicSpec
 
     "Forgetting to parse a field should throw when parsing" in {
 
-      object X extends Schema[X] {
-        val a = required[Seq[MyMap]]("a")
-        val b = required[Seq[MyMap]]("b", Seq(MyMap.marshal(MyMap.req_str -> "123")))
+      object SomeTestType extends Schema[SomeTestType] {
+        val a = required[Seq[SimpleTestType]]("a")
+        val b = required[Seq[SimpleTestType]]("b", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
       }
 
-      case class X(source: SourceData) extends Parsed[X] {
-        def schema = X
+      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
+        def schema = SomeTestType
         val df = parse(schema.b)
       }
 
-      val result = Try(X.parse(Map.empty))
+      val result = Try(SomeTestType.parse(Map.empty))
 
       result shouldBe a[Failure[_]]
       result.failed.get shouldBe a[InvalidSchemaUse]
@@ -253,24 +253,24 @@ class DynamicSpec
 
     "Forgetting to parse a field should throw when flattening" in {
 
-      object X extends Schema[X] {
-        val a = required[Seq[MyMap]]("a")
-        val b = required[Seq[MyMap]]("b", Seq(MyMap.marshal(MyMap.req_str -> "123")))
+      object SomeTestType extends Schema[SomeTestType] {
+        val a = required[Seq[SimpleTestType]]("a")
+        val b = required[Seq[SimpleTestType]]("b", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
       }
 
-      case class X(source: SourceData) extends Parsed[X] {
-        def schema = X
+      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
+        def schema = SomeTestType
         val df = parse(schema.b)
       }
 
-      val x = X(Map.empty)
+      val x = SomeTestType(Map.empty)
       val result = Try(x.flatten)
       result shouldBe a[Failure[_]]
       result.failed.get shouldBe a[InvalidSchemaUse]
     }
 
     "print schema" in {
-      println(MyMapRec)
+      println(NestedTestType)
     }
 
   }
