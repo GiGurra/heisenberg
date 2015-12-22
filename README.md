@@ -1,7 +1,7 @@
 # Heisenberg
 A scala library for dynamic data
 
-Heisenberg solves, without loss of information, the problems of
+Heisenberg helps solve, without loss of information, the problems of
 * Persistence of partially defined and evolving data
 * Routing of partially defined and evolving data
 * Data migration and versioning
