@@ -25,8 +25,7 @@ Heisenberg works well with dynamic data libraries, such as
 
 Heisenberg is built using type classes which specify how each field should be observed. Parsed objects are always accompanied by their source data (on any level of nesting), so no information is lost even though we only specify a subset of all actual fields.
 
-Building a simple object persistence layer or routing service where only a subset of information needs to be parsed? 
-No problem - Just specify those fields you're interested in. 
+Building a simple object persistence layer or routing service where only a subset of information needs to be parsed - *but everything still needs to be kept intact*? - No problem - Just specify those fields you're interested in analyzing.
 
 Got some FancyType class that you don't want to convert to a Heisenberg type but still want to have in some of your Heisenberg fields? Just provide a MapDataProducer[FancyType] and MapDataParser[FancyType] and you're good to go!
 
