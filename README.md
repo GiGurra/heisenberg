@@ -126,6 +126,21 @@ case class Event private(root: Map[String, Any]) extends Parsed[Event] {
 
 ```
 
+## Supported types
+
+As seen in the examples above - you need to provide a parser and producer (type classes - implementing the traits MapDataProducer[T] and MapDataParser[T]) for every Custom type not supported by default. The types supported by default are:
+* fixed point numbers (Byte, Short, Int, Long, BigInt)
+* floating point numbers (Float, Double)
+* String
+* Boolean
+* Seq[T : MapDataProducer : MapDataParser]
+* Map[String, T : MapDataProducer : MapDataParser]
+* Set[T : MapDataProducer : MapDataParser]
+* Either[L: MapDataProducer, R : MapDataProducer]
+* Subclasses of Parsed[T] (as in the examples above)
+
+Parsers are instantiated at application load (The classloader) and verified to exist in compile time. If you are missing one for your type - you will know when you compile your code.
+
 
 ## Etc
 
