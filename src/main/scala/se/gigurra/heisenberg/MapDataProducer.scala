@@ -57,11 +57,11 @@ object MapDataProducer {
     }
   }
 
-  implicit def eitherProducer[Left : MapDataProducer, Right : MapDataProducer] = new MapDataProducer[Either[Left, Right]] {
-    override def produce(t: Either[Left, Right]): Any =  {
+  implicit def eitherProducer[L : MapDataProducer, R : MapDataProducer] = new MapDataProducer[Either[L, R]] {
+    override def produce(t: Either[L, R]): Any =  {
       t match {
-        case Left(left) => MapDataProducer.produce[Left](left)
-        case Right(right) => MapDataProducer.produce[Right](right)
+        case Left(left) => MapDataProducer.produce[L](left)
+        case Right(right) => MapDataProducer.produce[R](right)
       }
     }
   }

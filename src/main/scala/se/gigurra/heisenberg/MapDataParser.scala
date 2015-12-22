@@ -121,14 +121,14 @@ object MapDataParser {
     }
   }
 
-  implicit def parsingEither[Left: MapDataParser : WeakTypeTag, Right: MapDataParser : WeakTypeTag] = new MapDataParser[Either[Left, Right]] {
+  implicit def parsingEither[L: MapDataParser : WeakTypeTag, R: MapDataParser : WeakTypeTag] = new MapDataParser[Either[L, R]] {
     def parse(field: Any) = {
-      Try(MapDataParser.parse[Left](field, "[left_either]")) match {
-        case Success(result) => Left[Left, Right](result)
-        case Failure(_) => Try(MapDataParser.parse[Right](field, "[right_either]")) match {
-          case Success(result) => Right[Left, Right](result)
+      Try(MapDataParser.parse[L](field, "[left_either]")) match {
+        case Success(result) => Left[L, R](result)
+        case Failure(_) => Try(MapDataParser.parse[R](field, "[right_either]")) match {
+          case Success(result) => Right[L, R](result)
           case Failure(_) =>
-            throw WrongType(expect = weakTypeTag[Either[Left, Right]].tpe.toString, was = clsOf(field))
+            throw WrongType(expect = weakTypeTag[Either[L, R]].tpe.toString, was = clsOf(field))
         }
       }
     }
