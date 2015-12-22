@@ -14,7 +14,7 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
 
 
 ## Key features
-* Selective parsing/validation without modifying/dropping the source data
+* Selective parsing/validation without truncating source data
 * Mapping of [key,value] <-> POJO without loss of information
 * Support custom types & representations
 * Support fields of inconsistent type (e.g. x.a sometimes int, sometimes string)
