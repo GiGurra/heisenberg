@@ -9,7 +9,7 @@ Heisenberg helps solve, without loss of information, the problems of
 
 Heisenberg provides
 * Selective parsing/validation without modifying/dropping the source data
-* Mapping of Key->Value <-> POJO without loss of information
+* Mapping of [key,value] <-> POJO without loss of information
 * Support for custom field types
 * Automatic data model migration (field name changes, semantic changes etc.)
 * Type classes instead of relection
