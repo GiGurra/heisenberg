@@ -8,9 +8,9 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
 ## Heisenberg helps solve (without data loss)
 * Persistence of partially defined and evolving data
 * Routing of partially defined and evolving data
-* Statically typed migration & consolidation of dynamic data
-* Statically typed validation of dynamic data
 * Statically typed manipulation of dynamic data
+* Migration & consolidation of dynamic data
+* Validation of dynamic data
 
 
 ## Heisenberg provides
