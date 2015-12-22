@@ -5,7 +5,7 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
   * All suggestions appreciated
 
 
-## Heisenberg helps with (without data loss)
+## Heisenberg helps with (w/o data loss)
 * Persistence of partially defined and evolving data
 * Routing of partially defined and evolving data
 * Statically typed manipulation of dynamic data
