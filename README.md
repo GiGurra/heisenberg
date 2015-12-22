@@ -9,12 +9,19 @@ Heisenberg solves, without loss of information, the problems of
 
 Heisenberg provides
 * Selective parsing/validation without modifying/dropping the source data
-* Mapping of Map[String, Any] <-> POJO without loss of information
+* Mapping of Key->Value <-> POJO without loss of information
 * Support for custom field types
 * Automatic data model migration (field name changes, semantic changes etc.)
 * Type classes instead of relection
 * No code generation (just pure Scala)
 * Simple API
+
+Heisenberg works well with other dynamic data libraries, e.g.
+* Xml 
+* Json (e.g. json4s, ..)
+* Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
+* Any Key-Value store, really.. 
+  * currently anything that can be viewed as Map[String, Any]
 
 Heisenberg is built using type classes which specify how each field should be observed. Parsed objects are always accompanied by their source data (on any level of nesting), so no information is lost even though we only specify a subset of all actual fields.
 
