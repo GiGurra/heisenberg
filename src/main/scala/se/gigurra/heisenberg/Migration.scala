@@ -9,9 +9,9 @@ object Migration {
 
   type Migrator[New, Old] = Old => New
 
-  def apply[New, Old](newParser: MapParser[New],
-                      oldParser: MapParser[Old],
-                      migrator: Migrator[New, Old]): MigratingMapParser[New, Old] = {
+  def parser[New, Old](newParser: MapParser[New],
+                       oldParser: MapParser[Old],
+                       migrator: Migrator[New, Old]): MigratingMapParser[New, Old] = {
     new MigratingMapParser(newParser, oldParser)(migrator)
   }
 
