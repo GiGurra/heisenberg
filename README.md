@@ -102,6 +102,26 @@ case class MyInner ..
 
 ```
 
+### 'Constructors'
+
+While writing tests or if you wish to use Parsed subclasses as your application's inner types, writing maps and then parsing them can be rather cumbersome. The best way to get around this is to add some constructors. Either the traditional way directly to your classes or with the pattern seen below on their schemas (=companion objects)
+
+
+### Type composition and components
+
+Documentation; WIP. See tests
+
+
+### Type migration and fallbacks
+
+Documentation; WIP. See tests
+
+
+### Field migration and fallbacks
+
+Documentation; WIP. See tests
+
+
 ### Custom types
 
 ```scala
