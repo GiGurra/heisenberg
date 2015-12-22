@@ -25,7 +25,7 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
 * Simple API
 
 
-## Heisenberg works well with dynamic data formats, such as
+## Compatibility
 * Json (e.g. json4s, ..)
 * Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
 * Any Key-Value store, really.. 
