@@ -43,3 +43,5 @@ Got some FancyType that you don't want to rewrite for Heisenberg type but still 
 The name Heisenberg comes from uncertainty in the data, but also wanting to observe as little of the data as possible, so as to not constrain whoever has the real model/definition of the data and let them evolve their model freely. 
 
 There's no code generation in Heisenberg, but if you need it, it shouldn't be too hard to add in both directions (e.g. protobuf <-> heisenberg, heisenberg <-> cql statements etc.. You can probably do it on-the-fly, dynamically ;) )
+
+May at some point start using Shapeless and/or Scalaz, but for now is just plain-old-scala.
