@@ -8,8 +8,8 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
 ## Heisenberg helps solve (without data loss)
 * Persistence of partially defined and evolving data
 * Routing of partially defined and evolving data
-* Data migration and versioning
-* Data model consolidation
+* Data migration
+* Data consolidation
 * Data validation
 * Data manipulation
 * Conflicting application versions
