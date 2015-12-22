@@ -32,4 +32,4 @@ Got some FancyType that you don't want to rewrite to a Heisenberg type but still
 
 The name Heisenberg comes from wanting to observe as little of the data as possible, so as to not constrain whoever has the real model/definition of the data and let them evolve their model freely. 
 
-There's no code generation in Heisenberg, but if you need it, it should be easy to add in both directions (e.g. protobuf <-> heisenberg, heisenberg <-> sql statements etc)
+There's no code generation in Heisenberg, but if you need it, it shouldn't be too hard to add in both directions (e.g. protobuf <-> heisenberg, heisenberg <-> cql statements etc)
