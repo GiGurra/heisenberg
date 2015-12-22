@@ -1,7 +1,13 @@
 # Heisenberg
 A scala library for dynamic data
 
-Heisenberg provides 
+Heisenberg solves, without loss of information, the problems of
+* Persistence of partially defined data types
+* Routing of partially defined data types
+* Data migration and versioning
+* Data model consolidation
+
+Heisenberg provides
 * Selective parsing/validation without modifying/dropping the source data
 * Mapping of Map[String, Any] <-> POJO without loss of information
 * Support for custom field types
