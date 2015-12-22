@@ -1,7 +1,7 @@
 # Heisenberg
 A scala library for dynamic [key,value] data - Get the best of both dynamic and static typing
 
-* Heisenberg is very much WIP atm.. Examples & doc may come later. (source will appear later today or tomorrow)
+* Heisenberg is very much WIP.. Examples & doc may come later.
   * All suggestions appreciated
 
 
