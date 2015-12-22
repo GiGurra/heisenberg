@@ -1,13 +1,16 @@
 package se.gigurra.heisenberg
 
+import scala.language.implicitConversions
+
 trait MapDataProducer[T] {
   def produce(t: T): Any
 }
 
 object MapDataProducer {
 
-  sealed abstract class ParseError(msg: String, cause: Throwable = null) extends RuntimeException(msg, cause)
-  case class WrongType(expect: String, was: String) extends ParseError(s"Unable to produce $expect from $was")
+  implicit def fcn2Producer[T](f: T => Any): MapDataProducer[T] = new MapDataProducer[T] {
+    override def produce(t: T): Any = f(t)
+  }
 
   def produce[T: MapDataProducer](t: T): Any = {
     implicitly[MapDataProducer[T]].produce(t)

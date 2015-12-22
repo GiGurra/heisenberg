@@ -3,26 +3,24 @@ package se.gigurra.heisenberg
 import scala.reflect.runtime.universe._
 import scala.util.{Failure, Success, Try}
 
+import scala.language.implicitConversions
+
 trait MapDataParser[T] {
   def parse(field: Any): T
 }
 
 object MapDataParser {
 
-  sealed abstract class ParseError(msg: String, cause: Throwable = null, var path: List[String] = Nil) extends RuntimeException(msg, cause) {
-    override def getMessage: String = {
-      s"Parsing failed for '${path.mkString(".")}': $msg"
-    }
+  implicit def fcn2Parser[T](f: Any => T): MapDataParser[T] = new MapDataParser[T] {
+    override def parse(field: Any): T = f(field)
   }
-  case class WrongType(expect: String, was: String) extends ParseError(s"Unable to parse field. Expected data of type $expect, but was a $was")
-  case class MissingField(name: String, typ: String) extends ParseError(s"Missing field: .$name ($typ)", null, List(name))
 
   def parse[T: MapDataParser](data: Any, path: String): T = {
     val parser = implicitly[MapDataParser[T]]
     try {
       parser.parse(data)
     } catch {
-      case e: ParseError =>
+      case e: Error =>
         e.path = path :: e.path
         throw e
     }
@@ -152,6 +150,14 @@ object MapDataParser {
       }
     }
   }
+
+  sealed abstract class Error(msg: String, cause: Throwable = null, var path: List[String] = Nil) extends RuntimeException(msg, cause) {
+    override def getMessage: String = {
+      s"Parsing failed for '${path.mkString(".")}': $msg"
+    }
+  }
+  case class WrongType(expect: String, was: String) extends Error(s"Unable to parse field. Expected data of type $expect, but was a $was")
+  case class MissingField(name: String, typ: String) extends Error(s"Missing field: .$name ($typ)", null, List(name))
 
   def clsOf(x: Any): String  = {
     x match {

@@ -12,7 +12,7 @@ object MapParser {
     try {
       implicitly[MapParser[T]].parse(data)
     } catch {
-      case e: MapDataParser.ParseError =>
+      case e: MapDataParser.Error =>
         val tag = weakTypeTag[T]
         val mirror = tag.mirror
         val clazz = mirror.runtimeClass(tag.tpe.typeSymbol.asClass)
@@ -28,7 +28,7 @@ object MapParser {
         try {
           MapDataParser.parse[T](t, fieldName)
         } catch {
-          case e: MapDataParser.ParseError =>
+          case e: MapDataParser.Error =>
             e.path = "SingleFieldObject" :: e.path
             throw e
         }
