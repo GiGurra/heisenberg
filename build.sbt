@@ -24,7 +24,7 @@ def getVersion: String = {
 		"SNAPSHOT"
 	}
 	
-	println(s"Building Heisenbert v. ${v}")
+	println(s"Building Heisenbert v. $v")
 	v
 }
 
