@@ -104,7 +104,28 @@ case class MyInner ..
 
 ### 'Constructors'
 
-While writing tests or if you wish to use Parsed subclasses as your application's inner types, writing maps and then parsing them can be rather cumbersome. The best way to get around this is to add some constructors. Either the traditional way directly to your classes or with the pattern seen below on their schemas (=companion objects)
+While writing tests or if you wish to use Parsed subclasses as your application's inner types, writing maps and then parsing them can be rather cumbersome. The best way to get around this is to add some constructors. Either the traditional way directly to your classes or with the pattern seen below on their schemas (=companion objects).
+
+We can extend our previous example type MyType with such a Schema constructor:
+
+```scala
+
+object MyType extends Schema[MyType] {
+ val foo = required[String]("a", default = "foo_default") // Creates a Field of type String
+ val bar = optional[Int]("b") // Creates a Field of type Int
+ 
+ def apply(foo: String, 
+           bar: Option[Int] = None, 
+           extaData: Map[String, Any] = Map.empty): MyType = marshal (
+   this.foo -> foo,
+   this.bar -> bar,
+   extraData
+  )
+}
+
+```
+
+See classes 'MapData' and 'Parsed' for more information on this API.
 
 
 ### Type composition
