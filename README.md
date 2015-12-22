@@ -18,7 +18,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 * Support custom types & representations
 * Support fields of inconsistent types (e.g. x.a sometimes int, sometimes string)
 * Automatic data model migration (field name changes, semantic changes etc.)
-* Type classes instead of reflection
+* [Type classes](https://twitter.github.io/scala_school/advanced-types.html) instead of reflection
 * No code generation (just pure Scala)
 * Custom arbitrary data validation (self-contained)
 * Simple API
@@ -192,7 +192,7 @@ case class Event private(root: Map[String, Any]) extends Parsed[Event] {
 
 ## Default supported types
 
-As seen in the examples above - you need to provide a parser and producer (type classes - implementing the traits MapDataProducer[T] and MapDataParser[T]) for every Custom type not supported by default. The following types are supported by default:
+As seen in the examples above - you need to provide a parser and producer ([type classes](https://twitter.github.io/scala_school/advanced-types.html) - implementing the traits MapDataProducer[T] and MapDataParser[T]) for every Custom type not supported by default. The following types are supported by default:
 * fixed point numbers (Byte, Short, Int, Long, BigInt)
 * floating point numbers (Float, Double)
 * String
@@ -208,11 +208,11 @@ Parsers are instantiated at application load (As implicit Field parameters when 
 
 ## Etc
 
-Heisenberg is built using type classes which specify how each type should be observed. Parsed objects are always accompanied by their source data (on any level of nesting), so no information is lost even though we only specify a subset of all actual fields.
+Heisenberg is built using [type classes](https://twitter.github.io/scala_school/advanced-types.html) which specify how each type should be observed. Parsed objects are always accompanied by their source data (on any level of nesting), so no information is lost even though we only specify a subset of all actual fields.
 
 Want to consolidate data of different models into a single one? Got data mixed from different application versions? Want to support multiple client application versions? Building a simple object persistence layer or routing service where only a subset of information needs to be parsed - *but the source data still needs to be kept intact*? - Why not give Heisenberg a chance :).
 
-Got some FancyType that you don't want to rewrite for Heisenberg type but still want to mix in? Just provide a MapDataProducer[FancyType] and MapDataParser[FancyType] type class and you're good to go!
+Got some FancyType that you don't want to rewrite for Heisenberg type but still want to mix in? Just provide a MapDataProducer[FancyType] and MapDataParser[FancyType] [type class](https://twitter.github.io/scala_school/advanced-types.html) and you're good to go!
 
 The name Heisenberg comes from uncertainty in the data, but also wanting to observe as little of the data as possible, so as to not constrain whoever has the real model/definition of the data and let them evolve their model freely. 
 
