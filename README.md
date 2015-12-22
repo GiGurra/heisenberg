@@ -135,7 +135,9 @@ object MyNewObjectType extends Schema[MyNewObjectType] {
 
 ```
 
-This will cause any old stored/received data to be atomatically migrated the next time it is parsed. If you don't want this automatic behaviour you can always do the above manually.
+Any old stored/received data to be atomatically migrated the next time it is parsed. If you don't want this automatic behaviour you can always do the above manually.
+
+This is of course only necessary if you make breaking changes to your model (e.g. change field names or semantics). 
 
 
 ### Field migration and fallbacks
