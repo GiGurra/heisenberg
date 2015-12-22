@@ -16,7 +16,7 @@ Heisenberg provides
 * No code generation (just pure Scala)
 * Simple API
 
-Heisenberg works well with other dynamic data libraries, e.g.
+Heisenberg works well with dynamic data libraries, such as
 * Xml 
 * Json (e.g. json4s, ..)
 * Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
