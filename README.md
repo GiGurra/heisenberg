@@ -6,6 +6,7 @@ Heisenberg helps solve, without loss of information, the problems of
 * Routing of partially defined and evolving data
 * Data migration and versioning
 * Data model consolidation
+* Data validation
 
 Heisenberg provides
 * Selective parsing/validation without modifying/dropping the source data
