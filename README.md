@@ -112,7 +112,7 @@ While writing tests or if you wish to use Parsed subclasses as your application'
 Documentation; WIP. See tests
 
 
-### Type migration and fallbacks
+### Type migration
 
 Each Heisenberg schema comes with an automatically created parser (Map[String, Any] => MyObjectType) - This parser is called when you call .parse(..) - as in the examples above. 
 
@@ -140,7 +140,7 @@ Any old stored/received data to be atomatically migrated the next time it is par
 This is of course only necessary if you make breaking changes to your model (e.g. change field names or semantics). 
 
 
-### Field migration and fallbacks
+### Field migration
 
 Documentation; WIP. See tests
 
