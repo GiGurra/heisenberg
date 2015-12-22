@@ -12,7 +12,6 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
 * Data consolidation
 * Data validation
 * Data manipulation
-* Conflicting application versions
 
 
 ## Heisenberg provides
