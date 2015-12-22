@@ -13,6 +13,7 @@ class DynamicSpec
   with Matchers
   with OneInstancePerTest {
 
+
   case class SimpleTestType(source: SourceData) extends Parsed[SimpleTestType] {
     def schema = SimpleTestType
     val req_str = parse(schema.req_str)
@@ -43,6 +44,33 @@ class DynamicSpec
       val instance = parse(source)
       instance.req_str shouldBe "Hello"
       instance.req_str_w_def shouldBe "You too"
+    }
+
+    "parse Either[Int, String]" in {
+
+      object EitherTestType extends Schema[EitherTestType] {
+        val intOrString = required[Either[Int, String]]("intOrString")
+      }
+
+      case class EitherTestType(source: SourceData) extends Parsed[EitherTestType] {
+        def schema = EitherTestType
+        val intOrString = parse(schema.intOrString)
+      }
+
+      import EitherTestType._
+      val stringSource = Map(intOrString.name -> "abc")
+      val stringInstance = parse(stringSource)
+      stringInstance.intOrString shouldBe a [Right[_,_]]
+      stringInstance.intOrString.right.get shouldBe "abc"
+
+
+      val intSource = Map(intOrString.name -> 123)
+      val intInstance = parse(intSource)
+      intInstance.intOrString shouldBe a [Left[_,_]]
+      intInstance.intOrString.left.get shouldBe 123
+
+      MapDataProducer.produce(stringInstance) shouldBe Map(intOrString.name -> "abc")
+      MapDataProducer.produce(intInstance) shouldBe Map(intOrString.name -> 123)
     }
 
     "preserve extra data in source and flattened formats" in {

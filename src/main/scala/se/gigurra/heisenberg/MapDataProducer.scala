@@ -57,6 +57,15 @@ object MapDataProducer {
     }
   }
 
+  implicit def eitherProducer[Left : MapDataProducer, Right : MapDataProducer] = new MapDataProducer[Either[Left, Right]] {
+    override def produce(t: Either[Left, Right]): Any =  {
+      t match {
+        case Left(left) => MapDataProducer.produce[Left](left)
+        case Right(right) => MapDataProducer.produce[Right](right)
+      }
+    }
+  }
+
   implicit def _setProducer[ElementType : MapDataProducer] = new MapDataProducer[Set[ElementType]] {
     override def produce(t: Set[ElementType]): Set[Any] =  {
       val transformer = implicitly[MapDataProducer[ElementType]]
