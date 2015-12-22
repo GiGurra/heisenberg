@@ -2,8 +2,8 @@
 A scala library for dynamic data
 
 Heisenberg solves, without loss of information, the problems of
-* Persistence of partially defined data types
-* Routing of partially defined data types
+* Persistence of partially defined and evolving data types
+* Routing of partially defined and evolving data types
 * Data migration and versioning
 * Data model consolidation
 
@@ -13,6 +13,7 @@ Heisenberg provides
 * Support for custom field types
 * Automatic data model migration (field name changes, semantic changes etc.)
 * Type classes instead of relection
+* No code generation (just pure Scala)
 * Simple API
 
 Heisenberg is built using type classes which specify how each field should be observed. Parsed objects are always accompanied by their source data (on any level of nesting), so no information is lost even though we only specify a subset of all actual fields.
