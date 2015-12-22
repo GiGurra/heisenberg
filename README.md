@@ -1,5 +1,5 @@
 # Heisenberg
-A scala library for handling dynamic and/or evolving [key,value] data when you're uncertain about its model, or if there simply is no model, or you just don't care. - Get the best of both dynamic and static worlds.
+A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, or if there simply is no model, or you just don't care. - Get the best of both dynamic and static worlds.
 
 * Heisenberg is very much WIP.. Examples & doc may come later.
   * All suggestions appreciated
