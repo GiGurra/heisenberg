@@ -137,7 +137,7 @@ Documentation; WIP. See tests
 
 Each Heisenberg schema comes with an automatically created parser (Map[String, Any] => MyObjectType) - This parser is called when you call .parse(..) - as in the examples above. 
 
-It is possible to override this parser field in your Schemas. This way you can inject your own parser. For migration purposes this can be a parser which handles more than one object type - i.e. a parser that first tries to parse => MyNewObjectType, and if that fails, tries to parse => MyOldObjectType and transforms the result to a MyNewObjectType. For this to work we need:
+It is possible to override this parser field in your Schemas. For migration purposes this can be a parser which handles more than one object type - i.e. a parser that first tries to parse => MyNewObjectType, and if that fails, tries to parse => MyOldObjectType and transforms the result to a MyNewObjectType. For this to work we need:
 * MyNewObjectType.defaultParser
 * MyOldObjectType.defaultParser
 * Your data transformation, 'migrator': [MyOldObjectType] => [MyNewObjectType]
