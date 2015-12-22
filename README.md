@@ -47,7 +47,10 @@ object MyType extends Schema[MyType] {
  val bar = optional[Int]("b") // Creates a Field of type Int
 }
 
-case class MyType(source: Map[String, Any]) extends Parsed[MyType] {
+// Make the constructor private to enforce going through the right parsing api
+// with schema checks. Make it public to allow parsing without full schema checks.
+// (The checks will then occurr on calling .flatten)
+case class MyType private(source: Map[String, Any]) extends Parsed[MyType] {
  val foo = parse(schema.foo) // String
  val bar = parse(schema.bar) // Option[Int]
  def schema = MyType
@@ -77,6 +80,25 @@ val dataBack = instance.flatten // Map[String, Any] - Including default values i
 // assuming we haven't added anything through e.g. default values:
 assert(data == databack)
 
+
+```
+
+
+### Nested types
+
+```scala
+
+object MyRoot extends Schema[MyRoot] {
+ val foo = required[Map[String, Seq[MyInner]]]("foo")
+}
+case class MyRoot private(root: Map[String, Any]) extends Parsed[MyRoot] {
+ val foo = parse(schema.foo)
+ def schema = MyRoot
+}
+
+// Declaring your other class in the same way ..
+object MyInner ..
+case class MyInner ..
 
 ```
 
