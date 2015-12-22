@@ -13,10 +13,11 @@ A scala library for dynamic [key,value] data - Get the best of both dynamic and 
 * Validation of dynamic data
 
 
-## Heisenberg provides
+## Key features
 * Selective parsing/validation without modifying/dropping the source data
 * Mapping of [key,value] <-> POJO without loss of information
-* Support for custom types & representations
+* Support custom types & representations
+* Support fields with varying type (e.g. x.a sometimes int, sometimes string)
 * Automatic data model migration (field name changes, semantic changes etc.)
 * Type classes instead of reflection
 * No code generation (just pure Scala)
