@@ -95,7 +95,7 @@ assert(data == databack)
 object MyRoot extends Schema[MyRoot] {
  val foo = required[Map[String, Seq[MyInner]]]("foo")
 }
-case class MyRoot private(root: Map[String, Any]) extends Parsed[MyRoot] {
+case class MyRoot private(source: Map[String, Any]) extends Parsed[MyRoot] {
  val foo = parse(schema.foo)
  def schema = MyRoot
 }
@@ -186,7 +186,7 @@ object Event extends Schema[Event] {
  val timeStamp = required[Instant]("log_time", default = Instant.now())
  val content = optional[String]("content")
 }
-case class Event private(root: Map[String, Any]) extends Parsed[Event] {
+case class Event private(source: Map[String, Any]) extends Parsed[Event] {
  val timeStamp = parse(schema.timeStamp)
  val content = parse(schema.content)
  def schema = Event
