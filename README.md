@@ -14,7 +14,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 
 ## Key features
 * Selective parsing/validation without truncating source data
-* Mapping [key,value] <-> [your class] without loss of information
+* Mapping [key,value] <-> [your class]a without loss of information
 * Support custom types & representations
 * Support fields of inconsistent types (e.g. x.a sometimes int, sometimes string)
 * Automatic data model migration (field name changes, semantic changes etc.)
@@ -176,7 +176,7 @@ object Event extends Schema[Event] {
  implicit val iParser = (x: Any) => x match { // Or expose an instance of the MapDataParser[Instant] trait instead
   case x: String => Instant.parse(x) // iso timestamp string
   case x: Number => new Instant(x, 0) // epoch millis
-  case x => throw MapDataParser.WrongType(expect = "String or Number for Instant", actual = x.getClass)
+  case x => throw MapDataParser.WrongType(expect = "String or Number for Instant", actual = x.getClass.toString)
  }
 
  val timeStamp = required[Instant]("log_time", default = Instant.now())
