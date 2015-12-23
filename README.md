@@ -196,7 +196,7 @@ case class Event private(root: Map[String, Any]) extends Parsed[Event] {
 
 ## Default supported types
 
-As seen in the examples above - you need to provide a parser and producer ([type classes](https://twitter.github.io/scala_school/advanced-types.html) - implementing the traits MapDataProducer[T] and MapDataParser[T]) for every Custom type not supported by default. The following types are supported by default:
+As seen in the examples above - you need to provide a parser and producer ([type classes](https://twitter.github.io/scala_school/advanced-types.html) - implementing the traits MapDataProducer[T] and MapDataParser[T]) for every Custom type not supported by default. The following types (and any combination of them) are supported by default:
 * fixed point numbers (Byte, Short, Int, Long, BigInt)
 * floating point numbers (Float, Double)
 * String
