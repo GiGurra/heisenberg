@@ -8,11 +8,11 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
     * This is where the heisenberg project started
 
 ## Heisenberg helps with (w/o data loss)
-* Persistence of partially defined and evolving data
-* Routing of partially defined and evolving data
-* Statically typed manipulation of dynamic data
-* Migration & consolidation of dynamic data
-* Validation of dynamic data
+* Persistence of evolving/dynamic data
+* Routing of evolving/dynamic data
+* Statically typed manipulation of evolving/dynamic data
+* Migration & consolidation of evolving/dynamic data
+* Validation of evolving/dynamic data
 
 
 ## Key features
