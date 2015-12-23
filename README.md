@@ -309,6 +309,8 @@ As seen in the examples above - you need to provide a parser and producer ([type
 
 Parsers are instantiated at application load (As implicit Field parameters when your schemas are loaded by the classloader) and verified to exist in compile time. If you are missing one for your type - you will know when you compile your code.
 
+You can always override the default parser on both field and type level.
+
 
 ## Try it
 
