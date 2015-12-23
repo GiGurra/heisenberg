@@ -1,7 +1,7 @@
 # Heisenberg
 A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, if there is no model, or you just don't care. - Get the best of both dynamic and static worlds.
 
-* Heisenberg is very much WIP.. Examples & doc may come later.
+* Heisenberg is very much WIP.. Examples & doc pending.
   * All suggestions appreciated
   * Yet to decide on API design and what features should/not be included
   * Used by [valhalla-game backend](https://github.com/saiaku-gaming/valhalla-server) (mongodb<->[finagle + heisenerg]<->unreal-engine)
