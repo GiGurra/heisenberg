@@ -118,7 +118,7 @@ object MyType extends Schema[MyType] {
  
  def apply(foo: String, 
            bar: Option[Int] = None, 
-           extaData: Map[String, Any] = Map.empty): MyType = marshal (
+           extraData: Map[String, Any] = Map.empty): MyType = marshal (
    this.foo -> foo,
    this.bar -> bar,
    extraData
