@@ -160,7 +160,7 @@ object MyNewObjectType extends Schema[MyNewObjectType] {
 
 Any old stored/received data to be atomatically migrated the next time it is parsed. If you don't want this automatic behaviour you can always do the above manually. This is of course only necessary if you make breaking changes to your model (e.g. change field names or semantics). 
 
-Simple schema changes like adding and removing non-required fields is fine, as long as you don't reuse the same field name for another data type. Basically expect the same behaviour as your standard serialization libraries á la Protobuf/Thrift.
+Simple schema changes like adding and removing non-required fields don't require migration, as long as you don't reuse the same field name for another data type. Basically expect the same behaviour as your standard serialization libraries á la Protobuf/Thrift.
 
 
 ### Field migration
