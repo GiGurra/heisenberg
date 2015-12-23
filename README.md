@@ -132,7 +132,103 @@ See classes 'MapData' and 'Parsed' for more information on this API.
 
 ### Type composition
 
-Documentation; WIP. See tests
+Suppose you wish to partially share capabilities, fields, constraints etc between different types while sticking to DRY. Heisenberg supports mixins of components and component schemas. Below is an example taken from an early version of the Valhalla Game model.
+
+The Heisenberg types in this example are:
+
+* Character (A character with owner stored in mongodb)
+* SaveCharacter (A save character request received from unreal engine through finagle)
+
+They are almost identical, except that the type 'Character' contains an additional field 'owner' (see below).
+
+```scala
+
+
+/////////////////////////////
+// Our storage definition
+
+case class Character private(source: SourceData)
+  extends Parsed[Character]
+  with CharacterData
+  with CharacterOwner {
+  def schema = Character
+}
+
+object Character
+  extends Schema[Character]
+  with CharacterDataSchema
+  with CharacterOwnerSchema
+  with Indexed[String, Character] {
+
+  def apply(name: String,
+            owner: String,
+            inventory: Seq[Item],
+            itemSlots: ItemSlots,
+            skills: Seq[Skill],
+            mesh: Mesh) = marshal(
+    this.name -> name,
+    this.owner -> owner,
+    this.inventory -> inventory,
+    this.itemSlots -> itemSlots,
+    this.skills -> skills,
+    this.mesh -> mesh
+  )
+
+  val indexer = makeIndexer(name)
+}
+
+
+/////////////////////////////
+// Our message definition
+
+case class SaveCharacter private(source: SourceData)
+  extends Parsed[SaveCharacter]
+  with CharacterData {
+  def schema = SaveCharacter
+}
+object SaveCharacter
+  extends Schema[SaveCharacter]
+  with CharacterDataSchema
+
+
+/////////////////////////////
+// Our components and schemas
+
+trait CharacterData extends Component {
+  def schema: CharacterDataSchema
+  val name = parse(schema.name)
+  val inventory = parse(schema.inventory)
+  val itemSlots = parse(schema.itemSlots)
+  val skills = parse(schema.skills)
+  val mesh = parse(schema.mesh)
+}
+
+trait CharacterOwner extends Component {
+  def schema: CharacterOwnerSchema
+  val owner = parse(schema.owner)
+}
+
+trait CharacterDataSchema extends ComponentSchema {
+  val name = required[String]("name")
+  val inventory = required[Seq[Item]]("inventory")
+  val itemSlots = required[ItemSlots]("item_slots")
+  val skills = required[Seq[Skill]]("skills")
+  val mesh = required[Mesh]("mesh")
+}
+
+trait CharacterOwnerSchema extends ComponentSchema {
+  val owner = required[String]("owner")
+}
+
+
+```
+
+It's a matter of taste if you prefer mixing in components or just having the Character class above store a SaveCharacter object + an owner field. I prefer component mixins. 
+
+A word on traditional OO inheritance: 
+* Heisenberg does not (yet) support inheritance
+  * So stick to mixins/components for now
+  * (although inheritance probably works with Heisenberg.. ;) it's not officially supported).
 
 
 ### Type migration
