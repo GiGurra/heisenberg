@@ -212,6 +212,17 @@ As seen in the examples above - you need to provide a parser and producer ([type
 Parsers are instantiated at application load (As implicit Field parameters when your schemas are loaded by the classloader) and verified to exist in compile time. If you are missing one for your type - you will know when you compile your code.
 
 
+## Try it
+
+Put a project dependency in your sbt file in your build.sbt. At some point in the future I will probably push it to sonatype/maven central as well.
+
+```sbt
+
+.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.1"))
+
+```
+
+
 ## Etc
 
 Heisenberg is built using [type classes](https://twitter.github.io/scala_school/advanced-types.html) which specify how each type should be observed. Parsed objects are always accompanied by their source data (on any level of nesting), so no information is lost even though we only specify a subset of all actual fields.
