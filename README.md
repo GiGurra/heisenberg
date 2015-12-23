@@ -206,6 +206,8 @@ As seen in the examples above - you need to provide a parser and producer ([type
 * Set[T : MapDataProducer : MapDataParser]
 * Either[L: MapDataProducer : MapDataParser, R : MapDataProducer : MapDataParser]
 * Subclasses of Parsed (as in the examples above)
+* Option[T : MapDataProducer : MapDataParser] 
+  * Through the optional[T] schema keyword
 
 Parsers are instantiated at application load (As implicit Field parameters when your schemas are loaded by the classloader) and verified to exist in compile time. If you are missing one for your type - you will know when you compile your code.
 
