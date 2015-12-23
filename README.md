@@ -261,7 +261,9 @@ Simple schema changes like adding and removing non-required fields don't require
 
 ### Field migration
 
-Documentation; WIP. (Short answer: Use Either[..,..] or custom explicit type parsers for that field)
+Documentation pending. 
+
+Short answer: Use Either[..,..] or custom explicit type parsers for that field, or just use plain old type migration.
 
 
 ### Custom types
