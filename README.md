@@ -76,8 +76,8 @@ val data = Map("a" -> "lalala", "b" -> 123, "extra_data" -> Seq(2,3,4))
 // The same as above
 object MyType ..
 case class MyType ..
+val instance ..
 
-val instance = MyType.parse(data) // returns object of type MyType
 val dataBack = instance.flatten // Map[String, Any] - Including unspecified fields in the source + specified default values if any were used
 
 // assuming we haven't added anything through e.g. default values:
