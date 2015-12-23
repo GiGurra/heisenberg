@@ -170,6 +170,8 @@ Documentation; WIP. See tests
 
 ### Custom types
 
+Sometimes you will want add write non-heisenberg objects to your schemas - Heisenberg only requires a MapDataParser[T] and a MapDataProducer[T] to be available during compile time. As long as those two exist, you can add whatever types you want. Below is an example:
+
 ```scala
 object Event extends Schema[Event] {
  // to handle custom types, we must provide a producer and a parser. 
