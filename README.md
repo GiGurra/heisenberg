@@ -17,7 +17,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 
 ## Key features
 * Selective parsing/validation without truncating source data
-* Mapping [key,value] <-> [your class]a without loss of information
+* Mapping [key,value] <-> [your class] without loss of information
 * Support custom types & representations
 * Support fields of inconsistent types (e.g. x.a sometimes int, sometimes string)
 * Automatic data model migration (field name changes, semantic changes etc.)
