@@ -78,7 +78,8 @@ object MyType ..
 case class MyType ..
 val instance ..
 
-val dataBack = instance.flatten // Map[String, Any] - Including unspecified fields in the source + specified default values if any were used
+// Including all the source data + default values for missing fields
+val dataBack = instance.flatten // Map[String, Any]
 
 // assuming we haven't added anything through e.g. default values:
 assert(data == databack)
