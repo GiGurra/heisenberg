@@ -223,7 +223,7 @@ trait CharacterOwnerSchema extends ComponentSchema {
 
 ```
 
-It's a matter of taste if you prefer mixing in components or just having the Character class above store a SaveCharacter object + an owner field. I prefer component mixins. 
+It's a matter of taste if you prefer mixing in components or just having the Character class above store a SaveCharacter object + an owner field. I prefer component mixins - Heisenberg will let you do either.
 
 A word on traditional OO inheritance: 
 * Heisenberg does not (yet) support inheritance
