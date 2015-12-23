@@ -314,7 +314,7 @@ You can always override the default parser on both field and type level.
 
 ## Try it
 
-Put a project dependency in your sbt file in your build.sbt. At some point in the future I will probably push it to sonatype/maven central as well.
+Put a project dependency in your build.sbt. At some point in the future I will probably push it to sonatype/maven central as well.
 
 ```sbt
 
