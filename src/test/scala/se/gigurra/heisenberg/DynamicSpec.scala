@@ -96,7 +96,7 @@ class DynamicSpec
       println(result.failed.get.getMessage)
     }
 
-    "fail to parse if wrong field type" in {
+    "fail to parse if wrong field type (String->Int)" in {
       import SimpleTestType._
       val source = Map(req_str.name -> "Hello", req_str_w_def.name -> 2)
       val result = Try(parse(source))
@@ -104,6 +104,33 @@ class DynamicSpec
       result.failed.get shouldBe a[MapDataParser.WrongType]
 
       println(result.failed.get.getMessage)
+    }
+
+    "fail to parse if wrong field type (String instead of Seq[Obj])" in {
+
+      object Inner extends Schema[Inner] {
+        val data = required[String]("data")
+      }
+
+      case class Inner(source: SourceData) extends Parsed[Inner] {
+        def schema = Inner
+        val data = parse(schema.data)
+      }
+
+      object Outer extends Schema[Outer] {
+        val inners = required[Seq[Inner]]("inners")
+      }
+
+      case class Outer(source: SourceData) extends Parsed[Outer] {
+        def schema = Outer
+        val inners = parse(schema.inners)
+      }
+
+      val source = Map("inners" -> "lalala")
+      val result = Try(Outer.parse(source))
+      result shouldBe a[Failure[_]]
+      result.failed.get shouldBe a[MapDataParser.WrongType]
+
     }
 
     "view default values when source is missing data" in {

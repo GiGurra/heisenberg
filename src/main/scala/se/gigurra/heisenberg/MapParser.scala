@@ -13,10 +13,7 @@ object MapParser {
       implicitly[MapParser[T]].parse(data)
     } catch {
       case e: MapDataParser.Error =>
-        val tag = weakTypeTag[T]
-        val mirror = tag.mirror
-        val clazz = mirror.runtimeClass(tag.tpe.typeSymbol.asClass)
-        e.path = clazz.getSimpleName :: e.path
+        e.path = weakTypeTag[T].tpe.toString.split('.').last :: e.path
         throw e
     }
   }
