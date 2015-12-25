@@ -249,7 +249,7 @@ object MyNewObjectType extends Schema[MyNewObjectType] {
   .. // Your custom migration code : 
   .. // MyOldObjectType => MyNewObjectType (See tests for examples)
  }
- override val parser = Migration.parser(MyNewObjectType.defaultParser, MyOldObjectType.defaultParser, myMigration)
+ override val parser = Migration.parser(MyNewObjectType.defaultParser, MyOldObjectType.parser, myMigration)
 }
 
 ```
