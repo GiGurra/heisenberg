@@ -53,10 +53,9 @@ object MyType extends Schema[MyType] {
 // Make the constructor private to enforce going through the right parsing api
 // with schema checks. Make it public to allow parsing without full schema checks.
 // (The checks will then occurr on calling .flatten)
-case class MyType private(source: Map[String, Any]) extends Parsed[MyType] {
+case class MyType private(source: Map[String, Any]) extends Parsed[MyType.type] {
  val foo = parse(schema.foo) // String
  val bar = parse(schema.bar) // Option[Int]
- def schema = MyType
  
  // You can put constraints either in the schema fields, or here directly
  require(bar.forall(_ > 0), "bar must be positive")
@@ -95,9 +94,8 @@ assert(data == databack)
 object MyRoot extends Schema[MyRoot] {
  val foo = required[Map[String, Seq[MyInner]]]("foo")
 }
-case class MyRoot private(source: Map[String, Any]) extends Parsed[MyRoot] {
+case class MyRoot private(source: Map[String, Any]) extends Parsed[MyRoot.type] {
  val foo = parse(schema.foo)
- def schema = MyRoot
 }
 
 // Declaring your other class in the same way ..
@@ -148,10 +146,9 @@ They are almost identical, except that the type 'Character' contains an addition
 // Our storage definition
 
 case class Character private(source: SourceData)
-  extends Parsed[Character]
+  extends Parsed[Character.type]
   with CharacterData
   with CharacterOwner {
-  def schema = Character
 }
 
 object Character
@@ -182,9 +179,8 @@ object Character
 // Our message definition
 
 case class SaveCharacter private(source: SourceData)
-  extends Parsed[SaveCharacter]
+  extends Parsed[SaveCharacter.type]
   with CharacterData {
-  def schema = SaveCharacter
 }
 object SaveCharacter
   extends Schema[SaveCharacter]
@@ -284,10 +280,9 @@ object Event extends Schema[Event] {
  val timeStamp = required[Instant]("log_time", default = Instant.now())
  val content = optional[String]("content")
 }
-case class Event private(source: Map[String, Any]) extends Parsed[Event] {
+case class Event private(source: Map[String, Any]) extends Parsed[Event.type] {
  val timeStamp = parse(schema.timeStamp)
  val content = parse(schema.content)
- def schema = Event
 }
 
 ```
