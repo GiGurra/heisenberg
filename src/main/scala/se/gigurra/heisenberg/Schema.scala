@@ -7,13 +7,15 @@ import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe.WeakTypeTag
 
-abstract class Schema[ObjectType <: Parsed[ObjectType] : WeakTypeTag] {
+abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
+
+  implicit val instance: this.type = this
 
   private val _fields = new ArrayBuffer[Field[Any]]
   private val _fieldsByName = new mutable.HashMap[String, Field[Any]]()
   private lazy val _fieldnames = fields.map(_.name).toSet
 
-  private def viewField[T, FieldType <: Field[T]](f: FieldType): FieldType = {
+  private def viewField[F, FieldType <: Field[F]](f: FieldType): FieldType = {
 
     if (_fieldsByName.contains(f.name))
       throw InvalidSchemaUse(s"Duplicated field name '${f.name}. Cannot add field '$f' to Schema \n: $this", null)
@@ -23,12 +25,12 @@ abstract class Schema[ObjectType <: Parsed[ObjectType] : WeakTypeTag] {
     f
   }
 
-  protected def required[T: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => T = null.asInstanceOf[T]): FieldRequired[T] = {
-    viewField[T, FieldRequired[T]](FieldRequired(name, Option(default)))
+  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => F = null.asInstanceOf[F]): FieldRequired[F] = {
+    viewField[F, FieldRequired[F]](FieldRequired(name, Option(default)))
   }
 
-  protected def optional[T: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[T] = {
-    viewField[Option[T], FieldOption[T]](FieldOption(name))
+  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[F] = {
+    viewField[Option[F], FieldOption[F]](FieldOption(name))
   }
 
   def contains(field: Field[Any]): Boolean = {
@@ -41,19 +43,19 @@ abstract class Schema[ObjectType <: Parsed[ObjectType] : WeakTypeTag] {
 
   def field(name: String): Field[Any] = _fieldsByName(name)
 
-  def apply(objectData: SourceData): ObjectType
+  def apply(objectData: SourceData): T
 
-  def marshal(fields: MapData*): ObjectType = MapParser.parse[ObjectType](MapData(fields: _*))
+  def marshal(fields: MapData*): T = MapParser.parse[T](MapData(fields: _*))
 
-  val defaultParser: MapParser[ObjectType] = Parsed.Parser[ObjectType](apply(_).validate())
+  val defaultParser: MapParser[T] = Parsed.Parser[T](apply(_).validate())
 
-  implicit def parser: MapParser[ObjectType] = defaultParser
+  implicit def parser: MapParser[T] = defaultParser
 
   override def toString: String = s"Schema (${getClass.getName}):\n\t${fields.mkString("\n\t")}"
 
-  implicit def dynamic2parsed(dd: MapData): ObjectType = marshal(dd)
+  implicit def dynamic2parsed(dd: MapData): T = marshal(dd)
 
-  def parse(sourceData: SourceData): ObjectType = MapParser.parse[ObjectType](sourceData)
+  def parse(sourceData: SourceData): T = MapParser.parse[T](sourceData)
 
 }
 

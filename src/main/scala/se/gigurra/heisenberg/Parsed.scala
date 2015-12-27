@@ -6,7 +6,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe._
 
-trait Parsed[T <: Parsed[T]] extends MapData { _: T =>
+abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
 
   ////////////////////////////////////
   //  Ctor API
@@ -41,8 +41,6 @@ trait Parsed[T <: Parsed[T]] extends MapData { _: T =>
 
   val source: SourceData
 
-  def schema: Schema[T]
-
 
   ////////////////////////////////////
   //  Convenience ops
@@ -54,11 +52,11 @@ trait Parsed[T <: Parsed[T]] extends MapData { _: T =>
 
   def flatten: SourceData = flattened
 
-  def marshal(sources: MapData*)(implicit tag: WeakTypeTag[T]) = schema.marshal(sources:_*)
+  def marshal(sources: MapData*)(implicit tag: WeakTypeTag[this.type]): this.type = schema.marshal(sources:_*).asInstanceOf[this.type]
 
   override def toString: String = flatten.toString
 
-  def validate(): T = {
+  def validate(): this.type = {
     if (!validated) {
       val parsedNames = parsed.map(_.name).toSet
       val schemaNames = schema.fieldNames
@@ -74,9 +72,9 @@ trait Parsed[T <: Parsed[T]] extends MapData { _: T =>
 
   override def equals(other: Any): Boolean = {
     other match {
-      case null              => false
-      case other : Parsed[_] => other.flatten == this.flatten
-      case _                 => false
+      case null             => false
+      case other : Parsed[_]   => other.flatten == this.flatten
+      case _                => false
     }
   }
 
@@ -105,23 +103,23 @@ trait Parsed[T <: Parsed[T]] extends MapData { _: T =>
 object Parsed {
 
   object Parser {
-    def apply[T <: Parsed[T]](applyMethod: SourceData => T) = new MapParser[T] {
+    def apply[T <: Parsed[_]](applyMethod: SourceData => T) = new MapParser[T] {
       def parse(data: SourceData): T = applyMethod(data)
     }
   }
 
-  implicit def mapDataParser[T <: Parsed[T] : MapParser: WeakTypeTag] = new MapDataParser[T] {
+  implicit def mapDataParser[T <: Parsed[_] : MapParser: WeakTypeTag] = new MapDataParser[T] {
     override def parse(field: Any): T = field match {
       case _: Map[_, _] => MapParser.parse[T](field.asInstanceOf[Map[String, Any]])
       case _ => throw MapDataParser.WrongType(expect = s"Map[String, Any] (to produce a ${weakTypeTag[T].tpe})", was = MapDataParser.clsOf(field))
     }
   }
 
-  implicit def mapProducer[T <: Parsed[T]] = new MapProducer[T] {
+  implicit def mapProducer[T <: Parsed[_]] = new MapProducer[T] {
     override def produce(t: T): SourceData = t.flatten
   }
 
-  implicit def mapDataProducer[T <: Parsed[T] : MapProducer] = new MapDataProducer[T] {
+  implicit def mapDataProducer[T <: Parsed[_] : MapProducer] = new MapDataProducer[T] {
     override def produce(t: T): SourceData = implicitly[MapProducer[T]].produce(t)
   }
 

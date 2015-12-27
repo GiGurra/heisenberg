@@ -49,14 +49,14 @@ trait MapData {
 
   def as[T : MapParser : WeakTypeTag]: T = MapParser.parse[T](source)
 
-  def as[T <: Parsed[T] : MapParser : WeakTypeTag](schema: Schema[T]): T = as[T]
+  def as[T <: Parsed[_] : MapParser : WeakTypeTag](schema: Schema[T]): T = as[T]
 
 }
 
 object MapData {
   type SourceData = Map[String, Any]
 
-  def fromSource[T <: Parsed[T]](t: T): MapData = PureMapData(t.source)
+  def fromSource[T <: Parsed[_]](t: T): MapData = PureMapData(t.source)
 
   implicit def map2dynamicData(source: Map[String, Any]): MapData = PureMapData(source)
 
@@ -78,7 +78,7 @@ object MapData {
     PureMapData(Map(tuple))
   }
 
-  implicit def parsed2dynamic[T <: Parsed[T]](t: T): MapData = fromSource(t)
+  implicit def parsed2dynamic[T <: Parsed[_]](t: T): MapData = fromSource(t)
 
   def apply(dynamics: MapData*): MapData = {
     dynamics.fold(new PureMapData())((a, b) => a + b)

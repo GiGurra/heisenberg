@@ -1,42 +1,20 @@
 package se.gigurra.heisenberg
 
-import MapData.SourceData
-import Migration.Migrator
 import org.scalatest._
 import org.scalatest.mock._
 
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
-class DynamicSpec
+class HeisenbergSpec
   extends WordSpec
   with MockitoSugar
   with Matchers
   with OneInstancePerTest {
 
+  import TestTypes._
 
-  case class SimpleTestType(source: SourceData) extends Parsed[SimpleTestType] {
-    def schema = SimpleTestType
-    val req_str = parse(schema.req_str)
-    val req_str_w_def = parse(schema.req_str_w_def)
-  }
 
-  object SimpleTestType extends Schema[SimpleTestType] {
-    val req_str = required[String]("a")
-    val req_str_w_def = required[String]("b", "mydefault")
-  }
-
-  case class NestedTestType(source: SourceData) extends Parsed[NestedTestType] {
-    def schema = NestedTestType
-    val rq = parse(schema.rq)
-    val df = parse(schema.df)
-  }
-
-  object NestedTestType extends Schema[NestedTestType] {
-    val rq = required[Seq[SimpleTestType]]("rq")
-    val df = required[Seq[SimpleTestType]]("df", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
-  }
-
-  "Dynamic" should {
+  "Heisenberg" should {
 
     "parse MyDynamic from Map" in {
       import SimpleTestType._
@@ -46,27 +24,33 @@ class DynamicSpec
       instance.req_str_w_def shouldBe "You too"
     }
 
+    "Remarshal MyDynamic from itself" in {
+      import SimpleTestType._
+      val source = MapData(req_str -> "Hello", req_str_w_def -> "You too").source
+      val instance: SimpleTestType = parse(source)
+      val instance2: SimpleTestType = instance.marshal(instance)
+      instance shouldBe instance2
+    }
+
+    "Schema from parsed should be of correct type" in {
+      import SimpleTestType._
+      val instance: SimpleTestType = parse(MapData(req_str -> "Hello", req_str_w_def -> "You too"))
+      val schema: SimpleTestType.type = instance.schema
+      schema shouldBe an[SimpleTestType.type]
+    }
+
     "parse Either[Int, String]" in {
 
-      object EitherTestType extends Schema[EitherTestType] {
-        val intOrString = required[Either[Int, String]]("intOrString")
-      }
-
-      case class EitherTestType(source: SourceData) extends Parsed[EitherTestType] {
-        def schema = EitherTestType
-        val intOrString = parse(schema.intOrString)
-      }
-
+      import ParseEitherTest._
       import EitherTestType._
       val stringSource = Map(intOrString.name -> "abc")
       val stringInstance = parse(stringSource)
-      stringInstance.intOrString shouldBe a [Right[_,_]]
+      stringInstance.intOrString shouldBe a[Right[_, _]]
       stringInstance.intOrString.right.get shouldBe "abc"
-
 
       val intSource = Map(intOrString.name -> 123)
       val intInstance = parse(intSource)
-      intInstance.intOrString shouldBe a [Left[_,_]]
+      intInstance.intOrString shouldBe a[Left[_, _]]
       intInstance.intOrString.left.get shouldBe 123
 
       MapDataProducer.produce(stringInstance) shouldBe Map(intOrString.name -> "abc")
@@ -108,24 +92,7 @@ class DynamicSpec
 
     "fail to parse if wrong field type (String instead of Seq[Obj])" in {
 
-      object Inner extends Schema[Inner] {
-        val data = required[String]("data")
-      }
-
-      case class Inner(source: SourceData) extends Parsed[Inner] {
-        def schema = Inner
-        val data = parse(schema.data)
-      }
-
-      object Outer extends Schema[Outer] {
-        val inners = required[Seq[Inner]]("inners")
-      }
-
-      case class Outer(source: SourceData) extends Parsed[Outer] {
-        def schema = Outer
-        val inners = parse(schema.inners)
-      }
-
+      import OuterInnerTest._
       val source = Map("inners" -> "lalala")
       val result = Try(Outer.parse(source))
       result shouldBe a[Failure[_]]
@@ -149,8 +116,8 @@ class DynamicSpec
     }
 
     "flatten with default values recursively" in {
-      import SimpleTestType._
       import NestedTestType._
+      import SimpleTestType._
       val innerSource1 = MapData(req_str -> "HelloInner1").source
       val innerSource2 = MapData(req_str -> "HelloInner2", req_str_w_def -> "123321").source
       val source = Map(rq.name -> Seq(innerSource1, innerSource2))
@@ -163,14 +130,14 @@ class DynamicSpec
     }
 
     "fail parse when inner data is invalid" in {
-      import SimpleTestType._
       import NestedTestType._
+      import SimpleTestType._
       val innerSource1 = MapData(req_str -> "HelloInner1").source
       val innerSource2 = MapData(/*req_str -> "HelloInner2",*/ req_str_w_def -> "123321").source
       val source = Map(rq.name -> Seq(innerSource1, innerSource2))
       val result = Try(NestedTestType.parse(source))
 
-      result shouldBe a [Failure[_]]
+      result shouldBe a[Failure[_]]
       result.failed.get shouldBe a[MapDataParser.MissingField]
 
       println(result.failed.get.getMessage)
@@ -185,33 +152,7 @@ class DynamicSpec
 
     "automatically migrate old data to new schemas (=time-travel: forwards)" in {
 
-      object UpdatedTestType extends Schema[UpdatedTestType] {
-        val req_str = required[String]("ax")
-        val req_str_w_def = required[String]("bx", "mydefaultx")
-
-        import MapData._
-
-        val migrator: Migrator[UpdatedTestType, SimpleTestType] = { old =>
-          old.flatten
-            .rename(SimpleTestType.req_str -> UpdatedTestType.req_str)
-            .rename(SimpleTestType.req_str_w_def -> UpdatedTestType.req_str_w_def)
-            .as[UpdatedTestType]
-        }
-
-        override lazy val parser = Migration.parser(
-          UpdatedTestType.defaultParser,
-          SimpleTestType.parser,
-          migrator,
-          warnOnMigrate = true
-        )
-      }
-      case class UpdatedTestType(source: SourceData)
-        extends Parsed[UpdatedTestType] {
-        def schema = UpdatedTestType
-        val req_str = parse(schema.req_str)
-        val req_str_w_def = parse(schema.req_str_w_def)
-      }
-
+      import MigrateTest._
       val source = MapData(SimpleTestType.req_str -> "Hello").source
       val m1 = SimpleTestType.parse(source)
       m1.req_str shouldBe "Hello"
@@ -230,17 +171,7 @@ class DynamicSpec
     }
 
     "throw if trying to parse a field more than once" in {
-
-      object SomeTestType extends Schema[SomeTestType] {
-        val b = required[Seq[SimpleTestType]]("b", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
-      }
-
-      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
-        def schema = SomeTestType
-        val df1 = parse(schema.b)
-        val df2 = parse(schema.b)
-      }
-
+      import ParseFieldMoreThanOnceTest._
       val result = Try(SomeTestType(Map.empty))
       result shouldBe a[Failure[_]]
       result.failed.get shouldBe a[InvalidSchemaUse]
@@ -263,66 +194,39 @@ class DynamicSpec
 
       "Fail on missing field" in {
         val result = Try(MapParser.parseSingleFieldObject[String](Map("some_field" -> "Hello"), "somxe_field"))
-        result shouldBe a [Failure[_]]
+        result shouldBe a[Failure[_]]
         println(result.failed.get.getMessage)
       }
 
       "Fail on wrong field type" in {
         val result = Try(MapParser.parseSingleFieldObject[String](Map("some_field" -> 123), "some_field"))
-        result shouldBe a [Failure[_]]
+        result shouldBe a[Failure[_]]
         println(result.failed.get.getMessage)
       }
 
     }
 
     "fail to create schema with duplicate field names" in {
-
-      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
-        def schema = SomeSchema
+      val result = try {
+        println(FailOnLoad.SomeSchema)
+        Success(())
+      } catch {
+        // This is actually considered a fatal error by scala :P // so the test is rather hacky
+        case e: Throwable => Failure(e)
       }
-
-      lazy val SomeSchema = new Schema[SomeTestType] {
-        val a1 = optional[String]("a")
-        val a2 = optional[String]("a")
-        def apply(d: Map[String, Any]): SomeTestType = marshal()
-      }
-
-      val result = Try(SomeSchema)
-      result shouldBe a [Failure[_]]
-      result.failed.get shouldBe a [InvalidSchemaUse]
-
+      result shouldBe an[Failure[_]]
+      result.failed.get shouldBe an[ExceptionInInitializerError]
     }
 
     "Forgetting to parse a field should throw when parsing" in {
-
-      object SomeTestType extends Schema[SomeTestType] {
-        val a = required[Seq[SimpleTestType]]("a")
-        val b = required[Seq[SimpleTestType]]("b", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
-      }
-
-      case class SomeTestType(source: SourceData) extends Parsed[SomeTestType] {
-        def schema = SomeTestType
-        val df = parse(schema.b)
-      }
-
-      val result = Try(SomeTestType.parse(Map.empty))
-
+      import ForgetToParseFieldTest._
+      val result = Try(X.parse(Map.empty))
       result shouldBe a[Failure[_]]
       result.failed.get shouldBe a[InvalidSchemaUse]
     }
 
     "Forgetting to parse a field should throw when flattening" in {
-
-      object X extends Schema[X] {
-        val a = required[Seq[SimpleTestType]]("a")
-        val b = required[Seq[SimpleTestType]]("b", Seq(SimpleTestType.marshal(SimpleTestType.req_str -> "123")))
-      }
-
-      case class X(source: SourceData) extends Parsed[X] {
-        def schema = X
-        val df = parse(schema.b)
-      }
-
+      import ForgetToParseFieldTest._
       val x = X(Map.empty)
       val result = Try(x.flatten)
       result shouldBe a[Failure[_]]
