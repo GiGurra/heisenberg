@@ -307,6 +307,15 @@ Parsers are instantiated at application load (As implicit Field parameters when 
 You can always override the default parser on both field and type level.
 
 
+## What about performance?
+
+* There's a lot of metadata here..
+  * I know - Heisenberg is young. We'll make it faster if it turns out to be slow
+
+* Hey - you said no reflection!
+  *Sorry, I lied. Heisenberg uses TypeTags to produce error messages. But it shouldn't impact happy path performance.
+
+
 ## Try it
 
 Put a project dependency in your build.sbt. At some point I will push it to sonatype/maven central as well.
