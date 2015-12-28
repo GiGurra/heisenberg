@@ -10,13 +10,21 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
   * All suggestions appreciated
   * Yet to decide on API design and what features should/not be included
 
-## Heisenberg helps with (w/o data loss)
-* Persistence of evolving/dynamic data
-* Routing of evolving/dynamic data
-* Statically typed manipulation of evolving/dynamic data
-* Migration & consolidation of evolving/dynamic data
-* Validation & sanitization of evolving/dynamic data
+## Heisenberg helps .. (w/o data loss)
 
+.. directly with
+
+* Interpretation & parsing
+* Migration & consolidation
+* Validation & sanitization
+
+.. and indirectly with
+
+* Statically typed manipulation of evolving/dynamic data
+* Persistence
+* Routing
+
+of evolving dynamic data
 
 ## Key features
 * Selective parsing/validation without truncating source data
