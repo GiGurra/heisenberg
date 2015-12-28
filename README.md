@@ -154,8 +154,7 @@ case class Character private(source: SourceData)
 object Character
   extends Schema[Character]
   with CharacterDataSchema
-  with CharacterOwnerSchema
-  with Indexed[String, Character] {
+  with CharacterOwnerSchema {
 
   def apply(name: String,
             owner: String,
@@ -171,7 +170,6 @@ object Character
     this.mesh -> mesh
   )
 
-  val indexer = makeIndexer(name)
 }
 
 
