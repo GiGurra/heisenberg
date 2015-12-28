@@ -254,9 +254,39 @@ Simple schema changes like adding and removing non-required fields don't require
 
 ### Field migration
 
-Documentation pending. 
+There are several approaches you can use for field migration. First though - is this really what you want? 
+Field migration is like the poor man's replacement/hack for type migration - There won't really be any traces of how your data evolved over time.
 
-Short answer: Use Either[..,..] or custom explicit type parsers for that field, or just use plain old type migration.
+But if you want it anyway, you can do something like: 
+
+```scala
+object TestType extends Schema[TestType] {
+  // Here we define both what the field is and what it used to be
+  val field = required[Int]("foo")
+  val oldField = required[String]("bar")
+}
+
+case class TestType(source: SourceData) extends Parsed[TestType.type] {
+  // Here we define how to transition from the old definition to the new
+  val foo = parse(schema.field, orElse = 2 * parse(schema.oldField).toInt)
+}
+```
+
+Suppose instead that the field changed type and semantics, but not name. Then you could do something like:
+
+```scala
+object TestType extends Schema[TestType] {
+  val foobar = required[Either[Int, String]]("foobar")
+}
+
+case class TestType(source: SourceData) extends Parsed[TestType.type] {
+  // Here we define how to transition from the old definition to the new
+  val foobar : Int = parse(schema.foobar) match {
+                      case Left(int) => int
+                      case Right(string) => 2 * string.toInt
+                     }
+}
+```
 
 
 ### Custom types
