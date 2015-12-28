@@ -1,5 +1,5 @@
 # Heisenberg
-A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, if there is no model, or you just don't care. - Get the best of both dynamic and static worlds.
+A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, if there is no model, or you just don't care.
 
 * Heisenberg is very much WIP.. Examples & doc pending.
   * All suggestions appreciated
@@ -233,7 +233,7 @@ Each Heisenberg schema comes with an automatically created parser (Map[String, A
 
 It is possible to override this parser field in your Schemas. For migration purposes this can be a parser which handles more than one object type - i.e. a parser that first tries to parse => MyNewObjectType, and if that fails, tries to parse => MyOldObjectType and transforms the result to a MyNewObjectType. For this to work we need:
 * MyNewObjectType.defaultParser
-* MyOldObjectType.defaultParser
+* MyOldObjectType.parser
 * Your data transformation, 'migrator': [MyOldObjectType] => [MyNewObjectType]
 
 We then simply override the 'parser' field in our Schema, e.g:
