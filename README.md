@@ -313,7 +313,7 @@ You can always override the default parser on both field and type level.
   * I know - Heisenberg is young. We'll make it faster if it turns out to be slow
 
 * Hey - you said no reflection!
-  *Sorry, I lied. Heisenberg uses TypeTags to produce error messages. But it shouldn't impact happy path performance.
+  * Heisenberg uses TypeTags to produce error messages. But it shouldn't impact happy path performance.
 
 
 ## Try it
