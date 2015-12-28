@@ -53,10 +53,7 @@ object MyType extends Schema[MyType] {
  val bar = optional[Int]("b") // Creates a Field of type Int
 }
 
-// Make the constructor private to enforce going through the right parsing api
-// with schema checks. Make it public to allow parsing without full schema checks.
-// (The checks will then occurr on calling .flatten)
-case class MyType private(source: Map[String, Any]) extends Parsed[MyType.type] {
+case class MyType (source: Map[String, Any]) extends Parsed[MyType.type] {
  val foo = parse(schema.foo) // String
  val bar = parse(schema.bar) // Option[Int]
  
@@ -97,7 +94,7 @@ assert(data == databack)
 object MyRoot extends Schema[MyRoot] {
  val foo = required[Map[String, Seq[MyInner]]]("foo")
 }
-case class MyRoot private(source: Map[String, Any]) extends Parsed[MyRoot.type] {
+case class MyRoot (source: Map[String, Any]) extends Parsed[MyRoot.type] {
  val foo = parse(schema.foo)
 }
 
@@ -148,7 +145,7 @@ They are almost identical, except that the type 'Character' contains an addition
 /////////////////////////////
 // Our storage definition
 
-case class Character private(source: SourceData)
+case class Character (source: SourceData)
   extends Parsed[Character.type]
   with CharacterData
   with CharacterOwner {
@@ -178,7 +175,7 @@ object Character
 /////////////////////////////
 // Our message definition
 
-case class SaveCharacter private(source: SourceData)
+case class SaveCharacter (source: SourceData)
   extends Parsed[SaveCharacter.type]
   with CharacterData {
 }
@@ -280,7 +277,7 @@ object Event extends Schema[Event] {
  val timeStamp = required[Instant]("log_time", default = Instant.now())
  val content = optional[String]("content")
 }
-case class Event private(source: Map[String, Any]) extends Parsed[Event.type] {
+case class Event (source: Map[String, Any]) extends Parsed[Event.type] {
  val timeStamp = parse(schema.timeStamp)
  val content = parse(schema.content)
 }
