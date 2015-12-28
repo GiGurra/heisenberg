@@ -1,15 +1,6 @@
 # Heisenberg
 A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, if there is no model, or you just don't care.
 
-* Used by [valhalla-game backend](https://github.com/saiaku-gaming/valhalla-server) (mongodb<->[finagle + franklin + heisenerg]<->unreal-engine)
-  * This is where the heisenberg project started
-* For more ideas on how to use Heisenberg check out:
-  * [Franklin](https://github.com/GiGurra/franklin)
-  * [Franklin-Heisenberg-bridge](https://github.com/GiGurra/franklin-heisenberg-bridge)
-* Heisenberg is very much WIP.. Examples & doc pending.
-  * All suggestions appreciated
-  * Yet to decide on API design and what features should/not be included
-
 ## Heisenberg helps .. (w/o data loss)
 
 .. directly with
@@ -20,7 +11,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 
 .. and indirectly with
 
-* Statically typed manipulation of evolving/dynamic data
+* Statically typed manipulation
 * Persistence
 * Routing
 
@@ -43,6 +34,18 @@ of evolving dynamic data
 * Schemaless NoSql databases (e.g. mongodb, couchbase, ..)
 * Any Key-Value data, really.. 
   * currently anything that can be viewed as Map[String, Any]
+
+
+## Misc
+
+* Used by [valhalla-game backend](https://github.com/saiaku-gaming/valhalla-server) (mongodb<->[finagle + franklin + heisenerg]<->unreal-engine)
+  * This is where the heisenberg project started
+* For more ideas on how to use Heisenberg check out:
+  * [Franklin](https://github.com/GiGurra/franklin)
+  * [Franklin-Heisenberg-bridge](https://github.com/GiGurra/franklin-heisenberg-bridge)
+* Heisenberg is very much WIP.. Examples & doc pending.
+  * All suggestions appreciated
+  * Yet to decide on API design and what features should/not be included
 
 
 ## Examples
