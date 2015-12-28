@@ -1,7 +1,7 @@
 # Heisenberg
 A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, if there is no model, or you just don't care.
 
-## Heisenberg helps .. (w/o data loss)
+## Heisenberg helps
 
 .. directly with
 
@@ -15,7 +15,8 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 * Persistence
 * Routing
 
-of evolving dynamic data
+of evolving dynamic data - **without truncation of the source **
+
 
 ## Key features
 * Selective parsing/validation without truncating source data
