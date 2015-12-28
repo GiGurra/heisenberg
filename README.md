@@ -14,8 +14,8 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 * Persistence of evolving/dynamic data
 * Routing of evolving/dynamic data
 * Statically typed manipulation of evolving/dynamic data
-* Migration, sanitization & consolidation of evolving/dynamic data
-* Validation of evolving/dynamic data
+* Migration & consolidation of evolving/dynamic data
+* Validation & sanitization of evolving/dynamic data
 
 
 ## Key features
