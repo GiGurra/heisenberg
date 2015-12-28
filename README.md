@@ -169,7 +169,6 @@ object Character
     this.skills -> skills,
     this.mesh -> mesh
   )
-
 }
 
 
