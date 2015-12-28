@@ -319,7 +319,7 @@ Put a project dependency in your build.sbt. At some point I will push it to sona
 
 ```sbt
 
-.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.2.2"))
+.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.2.3"))
 
 ```
 
