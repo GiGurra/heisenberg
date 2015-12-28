@@ -255,9 +255,7 @@ Simple schema changes like adding and removing non-required fields don't require
 ### Field migration
 
 There are several approaches you can use for field migration. First though - is this really what you want? 
-Field migration is like the poor man's replacement/hack for type migration - There won't really be any traces of how your data evolved over time.
-
-But if you want it anyway, you can do something like: 
+Field migration is like the poor man's replacement/hack for type migration. But if you want it anyway, you can do something like: 
 
 ```scala
 object TestType extends Schema[TestType] {
