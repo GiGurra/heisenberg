@@ -2,8 +2,6 @@ package se.gigurra.heisenberg
 
 import MapData.SourceData
 
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe.WeakTypeTag
 
@@ -14,23 +12,17 @@ abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
   //////////////////////////////////////////
   // Definition API
 
-  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => F): FieldRequired[F] = viewField[F, FieldRequired[F]](FieldRequired(name, Some(default)))
-  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldRequired[F] = viewField[F, FieldRequired[F]](FieldRequired(name, None))
+  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => F): FieldRequired[F] = addField[F, FieldRequired[F]](FieldRequired(name, Some(default)))
+  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldRequired[F] = addField[F, FieldRequired[F]](FieldRequired(name, None))
 
-  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => Option[F]): FieldOption[F] = viewField[Option[F], FieldOption[F]](FieldOption(name, default))
-  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[F] = viewField[Option[F], FieldOption[F]](FieldOption(name, None))
+  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => Option[F]): FieldOption[F] = addField[Option[F], FieldOption[F]](FieldOption(name, default))
+  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[F] = addField[Option[F], FieldOption[F]](FieldOption(name, None))
 
 
   //////////////////////////////////////////
   // API
 
-  def contains(field: Field[Any]) = fields.exists(_ eq field)
-
-  def fields: Seq[Field[Any]] = _fields
-
-  def fieldNames: Set[String] = _fieldnames
-
-  def field(name: String): Field[Any] = _fieldsByName(name)
+  def fields: Set[Field[Any]] = _fields
 
   def apply(objectData: SourceData): T
 
@@ -49,17 +41,10 @@ abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
   //////////////////////////////////////////
   // Helpers
 
-  private val _fields = new ArrayBuffer[Field[Any]]
-  private val _fieldsByName = new mutable.HashMap[String, Field[Any]]()
-  private lazy val _fieldnames = fields.map(_.name).toSet
+  private var _fields: Set[Field[Any]] = Set.empty
 
-  private def viewField[F, FieldType <: Field[F]](f: FieldType): FieldType = {
-
-    if (_fieldsByName.contains(f.name))
-      throw InvalidSchemaUse(s"Duplicated field name '${f.name}. Cannot add field '$f' to Schema \n: $this", null)
-
+  private def addField[F, FieldType <: Field[F]](f: FieldType): FieldType = {
     _fields += f
-    _fieldsByName += f.name -> f
     f
   }
 

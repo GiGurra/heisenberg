@@ -14,7 +14,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
   //
 
   private val observed = new ArrayBuffer[ObservedField[Any]]
-  private lazy val observedByName: Map[String, ObservedField[Any]] = observed.map(v => v.name -> v).toMap
   private lazy val flattened: Map[String, Any] = doFlatten()
 
   protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = parseOptField(field, orElse)
@@ -37,8 +36,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
 
   def observedFields: Seq[ObservedField[_]] = observed
 
-  def observedField[FieldType <: Any](name: String) = observedByName(name).view.asInstanceOf[FieldType]
-
   def flatten: SourceData = flattened
 
   def marshal(sources: MapData*)(implicit tag: WeakTypeTag[this.type]): this.type = schema.marshal(sources:_*).asInstanceOf[this.type]
@@ -51,9 +48,9 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
 
   override def equals(other: Any): Boolean = {
     other match {
-      case null             => false
-      case other : Parsed[_]   => other.flatten == this.flatten
-      case _                => false
+      case null               => false
+      case other : Parsed[_]  => other.flatten == this.flatten
+      case _                  => false
     }
   }
 
@@ -66,23 +63,17 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
   }
 
   private def parseOptField[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = {
-    validateFieldOnParse(field)
     val view = field.parse(source, orElse)
     view.foreach(observed += ObservedField(_, field))
     view
   }
 
   private def parseReqField[FieldType : MapDataProducer](field: FieldRequired[FieldType], orElse: => Option[FieldType]): FieldType = {
-    validateFieldOnParse(field)
     val view = field.parse(source, orElse)
     observed += ObservedField(view, field)
     view
   }
 
-  private def validateFieldOnParse(field: Field[_]): Unit =  {
-    if (!schema.contains(field))
-      throw InvalidSchemaUse(s"Attempted to parse field '$field' not part of schema $schema", null)
-  }
 }
 
 object Parsed {

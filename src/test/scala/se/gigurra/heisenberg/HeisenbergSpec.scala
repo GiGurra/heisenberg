@@ -204,18 +204,6 @@ class HeisenbergSpec
 
     }
 
-    "fail to create schema with duplicate field names" in {
-      val result = try {
-        println(FailOnLoad.SomeSchema)
-        Success(())
-      } catch {
-        // This is actually considered a fatal error by scala :P // so the test is rather hacky
-        case e: Throwable => Failure(e)
-      }
-      result shouldBe an[Failure[_]]
-      result.failed.get shouldBe an[ExceptionInInitializerError]
-    }
-
     "print schema" in {
       println(NestedTestType)
     }
