@@ -12,10 +12,11 @@ class FieldRequired[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: 
 
   def -->(t: T): (String, Any) = name -> MapDataProducer.produce(t)
 
-  def parse(data: SourceData): T = {
+  def parse(data: SourceData, orElse: => Option[T]): T = {
     data
       .get(name).map(MapDataParser.parse[T](_, name))
       .orElse(default)
+      .orElse(orElse)
       .getOrElse(throw MapDataParser.MissingField(name = name, typ = implicitly[WeakTypeTag[T]].tpe.toString))
   }
 
@@ -32,10 +33,11 @@ class FieldOption[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: St
 
   def -->(t: T): (String, Any) = name -> MapDataProducer.produce(t)
 
-  def parse(data: SourceData): Option[T] =
+  def parse(data: SourceData, orElse: => Option[T]): Option[T] =
     data
       .get(name).map(MapDataParser.parse[T](_, name))
       .orElse(default)
+      .orElse(orElse)
 
   def asOptional: FieldOption[T] = this
 

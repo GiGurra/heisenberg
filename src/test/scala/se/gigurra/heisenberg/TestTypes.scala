@@ -115,6 +115,28 @@ object TestTypes {
 
   }
 
+  object ComponentTest {
+
+    object SomeTestType
+      extends Schema[SomeTestType]
+      with MyComponentSchema {
+    }
+
+    case class SomeTestType(source: SourceData)
+      extends Parsed[SomeTestType.type]
+      with MyComponent {
+    }
+
+    trait MyComponent extends Component {
+      def schema: MyComponentSchema
+    }
+
+    trait MyComponentSchema extends ComponentSchema {
+
+    }
+
+  }
+
 }
 
 object FailOnLoad {

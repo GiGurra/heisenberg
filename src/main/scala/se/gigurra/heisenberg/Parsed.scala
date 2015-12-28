@@ -6,7 +6,8 @@ import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe._
 
-abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
+abstract class Parsed[S <: Schema[_]](implicit val schema: S)
+  extends MapData {
 
   ////////////////////////////////////
   //  Ctor API
@@ -16,19 +17,21 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
   private lazy val observedByName: Map[String, ObservedField[Any]] = observed.map(v => v.name -> v).toMap
   private lazy val flattened: Map[String, Any] = doFlatten()
 
-  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType]): Option[FieldType] = {
+  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = {
     validateFieldOnParse(field)
-    val view = field.parse(source)
+    val view = field.parse(source, orElse)
     view.foreach(observed += ObservedField(_, field))
     view
   }
+  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType]): Option[FieldType] = parse(field, null.asInstanceOf[Option[FieldType]])
 
-  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType]): FieldType = {
+  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType], orElse: => FieldType): FieldType = {
     validateFieldOnParse(field)
-    val view = field.parse(source)
+    val view = field.parse(source, Option(orElse))
     observed += ObservedField(view, field)
     view
   }
+  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType]): FieldType = parse(field, null.asInstanceOf[FieldType])
 
 
   ////////////////////////////////////
