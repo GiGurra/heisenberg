@@ -29,8 +29,8 @@ abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
     viewField[F, FieldRequired[F]](FieldRequired(name, Option(default)))
   }
 
-  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[F] = {
-    viewField[Option[F], FieldOption[F]](FieldOption(name))
+  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => Option[F] = None): FieldOption[F] = {
+    viewField[Option[F], FieldOption[F]](FieldOption(name, default))
   }
 
   def contains(field: Field[Any]): Boolean = {
@@ -47,7 +47,7 @@ abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
 
   def marshal(fields: MapData*): T = MapParser.parse[T](MapData(fields: _*))
 
-  val defaultParser: MapParser[T] = Parsed.Parser[T](apply(_).validate())
+  val defaultParser: MapParser[T] = Parsed.Parser[T](Schema.this.apply)
 
   implicit def parser: MapParser[T] = defaultParser
 

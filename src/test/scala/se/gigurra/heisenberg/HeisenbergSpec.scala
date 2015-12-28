@@ -170,13 +170,6 @@ class HeisenbergSpec
 
     }
 
-    "throw if trying to parse a field more than once" in {
-      import ParseFieldMoreThanOnceTest._
-      val result = Try(SomeTestType(Map.empty))
-      result shouldBe a[Failure[_]]
-      result.failed.get shouldBe a[InvalidSchemaUse]
-    }
-
     "automatically migrate new data to old schemas (=time-travel: backwards)" in {
       // TODO: Implement
     }
@@ -216,21 +209,6 @@ class HeisenbergSpec
       }
       result shouldBe an[Failure[_]]
       result.failed.get shouldBe an[ExceptionInInitializerError]
-    }
-
-    "Forgetting to parse a field should throw when parsing" in {
-      import ForgetToParseFieldTest._
-      val result = Try(X.parse(Map.empty))
-      result shouldBe a[Failure[_]]
-      result.failed.get shouldBe a[InvalidSchemaUse]
-    }
-
-    "Forgetting to parse a field should throw when flattening" in {
-      import ForgetToParseFieldTest._
-      val x = X(Map.empty)
-      val result = Try(x.flatten)
-      result shouldBe a[Failure[_]]
-      result.failed.get shouldBe a[InvalidSchemaUse]
     }
 
     "print schema" in {

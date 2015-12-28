@@ -28,9 +28,14 @@ object FieldRequired {
   def apply[T: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => Option[T] = None): FieldRequired[T] = new FieldRequired[T](name, default)
 }
 
-class FieldOption[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: String) extends Field[Option[T]] {
+class FieldOption[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: String, default: => Option[T] = None) extends Field[Option[T]] {
+
   def -->(t: T): (String, Any) = name -> MapDataProducer.produce(t)
-  def parse(data: SourceData): Option[T] = data.get(name).map(MapDataParser.parse[T](_, name))
+
+  def parse(data: SourceData): Option[T] =
+    data
+      .get(name).map(MapDataParser.parse[T](_, name))
+      .orElse(default)
 
   def asOptional: FieldOption[T] = this
 
@@ -38,6 +43,6 @@ class FieldOption[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: St
 }
 
 object FieldOption {
-  def apply[T: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[T] = new FieldOption[T](name)
+  def apply[T: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => Option[T] = None): FieldOption[T] = new FieldOption[T](name, default)
 }
 

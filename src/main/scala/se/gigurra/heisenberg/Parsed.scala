@@ -12,8 +12,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
   //  Ctor API
   //
 
-  private var validated = false
-  private val parsed = new ArrayBuffer[Field[Any]]
   private val observed = new ArrayBuffer[ObservedField[Any]]
   private lazy val observedByName: Map[String, ObservedField[Any]] = observed.map(v => v.name -> v).toMap
   private lazy val flattened: Map[String, Any] = doFlatten()
@@ -22,7 +20,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
     validateFieldOnParse(field)
     val view = field.parse(source)
     view.foreach(observed += ObservedField(_, field))
-    parsed += field
     view
   }
 
@@ -30,7 +27,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
     validateFieldOnParse(field)
     val view = field.parse(source)
     observed += ObservedField(view, field)
-    parsed += field
     view
   }
 
@@ -56,16 +52,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
 
   override def toString: String = flatten.toString
 
-  def validate(): this.type = {
-    if (!validated) {
-      val parsedNames = parsed.map(_.name).toSet
-      val schemaNames = schema.fieldNames
-      validate(parsedNames == schemaNames, s"Not all fields parsed, missing: [${(schemaNames -- parsedNames).mkString(", ")}]")
-      validated = true
-    }
-    this
-  }
-
   override def hashCode(): Int = {
     flatten.hashCode()
   }
@@ -83,7 +69,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
   //
 
   private def doFlatten(): Map[String, Any] = {
-    validate()
     source ++ observed.map(v => v.name -> v.flatten)
   }
 
@@ -95,7 +80,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S) extends MapData {
 
   private def validateFieldOnParse(field: Field[_]): Unit =  {
     validate(schema.contains(field), s"Attempted to parse field '$field' not part of schema $schema")
-    validate(!parsed.exists(_ eq field), s"Attempted to parse fields ${field.name} twice in ${this}, Schema:\n$schema")
   }
 
 }
