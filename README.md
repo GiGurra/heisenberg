@@ -4,7 +4,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 * Heisenberg is very much WIP.. Examples & doc pending.
   * All suggestions appreciated
   * Yet to decide on API design and what features should/not be included
-  * Used by [valhalla-game backend](https://github.com/saiaku-gaming/valhalla-server) (mongodb<->[finagle + heisenerg]<->unreal-engine)
+  * Used by [valhalla-game backend](https://github.com/saiaku-gaming/valhalla-server) (mongodb<->[finagle + franklin + heisenerg]<->unreal-engine)
     * This is where the heisenberg project started
   * For more ideas on how to use Heisenberg check out:
     * [Franklin](https://github.com/GiGurra/franklin)
