@@ -170,12 +170,17 @@ class HeisenbergSpec
 
     }
 
-    "automatically migrate new data to old schemas (=time-travel: backwards)" in {
-      // TODO: Implement
-    }
 
-    "support inheritance" in {
-      // TODO: Implement
+    "support field migration" in {
+      import FieldMigrationTest._
+
+      val data = Map("foo" -> 2)
+      val instance1 = TestType(data)
+
+      val oldData = Map("bar" -> "1")
+      val instance2 = TestType(oldData)
+
+      instance1.foo shouldBe instance2.foo
     }
 
     "support anonymous single field objects" should {
@@ -213,6 +218,14 @@ class HeisenbergSpec
 
     "print schema" in {
       println(NestedTestType)
+    }
+
+    "automatically migrate new data to old schemas (=time-travel: backwards)" in {
+      // TODO: Implement
+    }
+
+    "support inheritance" in {
+      // TODO: Implement
     }
 
   }

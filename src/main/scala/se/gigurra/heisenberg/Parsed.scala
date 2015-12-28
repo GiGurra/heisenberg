@@ -17,21 +17,11 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
   private lazy val observedByName: Map[String, ObservedField[Any]] = observed.map(v => v.name -> v).toMap
   private lazy val flattened: Map[String, Any] = doFlatten()
 
-  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = {
-    validateFieldOnParse(field)
-    val view = field.parse(source, orElse)
-    view.foreach(observed += ObservedField(_, field))
-    view
-  }
-  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType]): Option[FieldType] = parse(field, null.asInstanceOf[Option[FieldType]])
+  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = parseOptField(field, orElse)
+  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType]): Option[FieldType] = parseOptField(field, None)
 
-  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType], orElse: => FieldType): FieldType = {
-    validateFieldOnParse(field)
-    val view = field.parse(source, Option(orElse))
-    observed += ObservedField(view, field)
-    view
-  }
-  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType]): FieldType = parse(field, null.asInstanceOf[FieldType])
+  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType], orElse: => FieldType): FieldType = parseReqField(field, Some(orElse))
+  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType]): FieldType = parseReqField(field, None)
 
 
   ////////////////////////////////////
@@ -75,16 +65,24 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
     source ++ observed.map(v => v.name -> v.flatten)
   }
 
-  private def validate(condition: Boolean, msg: => String, cause: => Throwable = null): Unit = {
-    if (!condition) {
-      throw InvalidSchemaUse(msg, cause)
-    }
+  private def parseOptField[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = {
+    validateFieldOnParse(field)
+    val view = field.parse(source, orElse)
+    view.foreach(observed += ObservedField(_, field))
+    view
+  }
+
+  private def parseReqField[FieldType : MapDataProducer](field: FieldRequired[FieldType], orElse: => Option[FieldType]): FieldType = {
+    validateFieldOnParse(field)
+    val view = field.parse(source, orElse)
+    observed += ObservedField(view, field)
+    view
   }
 
   private def validateFieldOnParse(field: Field[_]): Unit =  {
-    validate(schema.contains(field), s"Attempted to parse field '$field' not part of schema $schema")
+    if (!schema.contains(field))
+      throw InvalidSchemaUse(s"Attempted to parse field '$field' not part of schema $schema", null)
   }
-
 }
 
 object Parsed {

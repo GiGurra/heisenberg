@@ -11,31 +11,20 @@ abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
 
   implicit val instance: this.type = this
 
-  private val _fields = new ArrayBuffer[Field[Any]]
-  private val _fieldsByName = new mutable.HashMap[String, Field[Any]]()
-  private lazy val _fieldnames = fields.map(_.name).toSet
+  //////////////////////////////////////////
+  // Definition API
 
-  private def viewField[F, FieldType <: Field[F]](f: FieldType): FieldType = {
+  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => F): FieldRequired[F] = viewField[F, FieldRequired[F]](FieldRequired(name, Some(default)))
+  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldRequired[F] = viewField[F, FieldRequired[F]](FieldRequired(name, None))
 
-    if (_fieldsByName.contains(f.name))
-      throw InvalidSchemaUse(s"Duplicated field name '${f.name}. Cannot add field '$f' to Schema \n: $this", null)
+  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => Option[F]): FieldOption[F] = viewField[Option[F], FieldOption[F]](FieldOption(name, default))
+  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String): FieldOption[F] = viewField[Option[F], FieldOption[F]](FieldOption(name, None))
 
-    _fields += f
-    _fieldsByName += f.name -> f
-    f
-  }
 
-  protected def required[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => F = null.asInstanceOf[F]): FieldRequired[F] = {
-    viewField[F, FieldRequired[F]](FieldRequired(name, Option(default)))
-  }
+  //////////////////////////////////////////
+  // API
 
-  protected def optional[F: WeakTypeTag : MapDataParser : MapDataProducer](name: String, default: => Option[F] = None): FieldOption[F] = {
-    viewField[Option[F], FieldOption[F]](FieldOption(name, default))
-  }
-
-  def contains(field: Field[Any]): Boolean = {
-    fields.exists(_ eq field)
-  }
+  def contains(field: Field[Any]) = fields.exists(_ eq field)
 
   def fields: Seq[Field[Any]] = _fields
 
@@ -56,6 +45,23 @@ abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
   implicit def dynamic2parsed(dd: MapData): T = marshal(dd)
 
   def parse(sourceData: SourceData): T = MapParser.parse[T](sourceData)
+
+  //////////////////////////////////////////
+  // Helpers
+
+  private val _fields = new ArrayBuffer[Field[Any]]
+  private val _fieldsByName = new mutable.HashMap[String, Field[Any]]()
+  private lazy val _fieldnames = fields.map(_.name).toSet
+
+  private def viewField[F, FieldType <: Field[F]](f: FieldType): FieldType = {
+
+    if (_fieldsByName.contains(f.name))
+      throw InvalidSchemaUse(s"Duplicated field name '${f.name}. Cannot add field '$f' to Schema \n: $this", null)
+
+    _fields += f
+    _fieldsByName += f.name -> f
+    f
+  }
 
 }
 

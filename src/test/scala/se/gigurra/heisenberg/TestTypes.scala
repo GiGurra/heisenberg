@@ -115,7 +115,7 @@ object TestTypes {
 
   }
 
-  object ComponentTest {
+  object ComponentCompilesTest {
 
     object SomeTestType
       extends Schema[SomeTestType]
@@ -135,6 +135,18 @@ object TestTypes {
 
     }
 
+  }
+
+  object FieldMigrationTest {
+
+    case class TestType(source: SourceData) extends Parsed[TestType.type] {
+      val foo = parse(schema.field, orElse = 2 * parse(schema.oldField).toInt)
+    }
+
+    object TestType extends Schema[TestType] {
+      val field = required[Int]("foo")
+      val oldField = required[String]("bar")
+    }
   }
 
 }
