@@ -15,7 +15,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 * Persistence
 * Routing
 
-of evolving dynamic data - **without truncation of the source **
+of evolving dynamic data - __without truncation on any level of nesting__
 
 
 ## Key features
