@@ -280,7 +280,6 @@ object TestType extends Schema[TestType] {
 }
 
 case class TestType(source: SourceData) extends Parsed[TestType.type] {
-  // Here we define how to transition from the old definition to the new
   val foobar : Int = parse(schema.foobar) match {
                       case Left(int) => int
                       case Right(string) => 2 * string.toInt
