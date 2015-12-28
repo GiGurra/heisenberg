@@ -285,6 +285,8 @@ case class TestType(source: SourceData) extends Parsed[TestType.type] {
 }
 ```
 
+Or define two separate fields refering to the same field name, and apply the previous strategy.
+
 
 ### Custom types
 
@@ -346,7 +348,7 @@ Put a project dependency in your build.sbt. At some point I will push it to sona
 
 ```sbt
 
-.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.2.3"))
+.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.2.4"))
 
 ```
 
