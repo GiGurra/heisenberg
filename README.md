@@ -145,7 +145,7 @@ They are almost identical, except that the type 'Character' contains an addition
 /////////////////////////////
 // Our storage definition
 
-case class Character (source: SourceData)
+case class Character (source: Map[String, Any])
   extends Parsed[Character.type]
   with CharacterData
   with CharacterOwner {
@@ -175,7 +175,7 @@ object Character
 /////////////////////////////
 // Our message definition
 
-case class SaveCharacter (source: SourceData)
+case class SaveCharacter (source: Map[String, Any])
   extends Parsed[SaveCharacter.type]
   with CharacterData {
 }
@@ -264,7 +264,7 @@ object TestType extends Schema[TestType] {
   val oldField = required[String]("bar")
 }
 
-case class TestType(source: SourceData) extends Parsed[TestType.type] {
+case class TestType(source: Map[String, Any]) extends Parsed[TestType.type] {
   // Here we define how to transition from the old definition to the new
   val foo = parse(schema.field, orElse = 2 * parse(schema.oldField).toInt)
 }
@@ -277,7 +277,7 @@ object TestType extends Schema[TestType] {
   val foobar = required[Either[Int, String]]("foobar")
 }
 
-case class TestType(source: SourceData) extends Parsed[TestType.type] {
+case class TestType(source: Map[String, Any]) extends Parsed[TestType.type] {
   val foobar : Int = parse(schema.foobar) match {
                       case Left(int) => int
                       case Right(string) => 2 * string.toInt
