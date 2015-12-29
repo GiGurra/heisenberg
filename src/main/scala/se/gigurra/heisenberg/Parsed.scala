@@ -48,7 +48,6 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
 
   override def equals(other: Any): Boolean = {
     other match {
-      case null               => false
       case other : Parsed[_]  => other.flatten == this.flatten
       case _                  => false
     }
