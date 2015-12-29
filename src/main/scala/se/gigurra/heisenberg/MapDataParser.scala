@@ -68,7 +68,7 @@ object MapDataParser {
         case field: BigInt => field
         case field: java.math.BigInteger => field
         case field: Number => field.longValue()
-        case _ => throw WrongType(expect = "Long", was = clsOf(field))
+        case _ => throw WrongType(expect = "BigInt", was = clsOf(field))
       }
     }
   }
