@@ -55,7 +55,7 @@ case class MyType (source: Map[String, Any]) extends Parsed[MyType.type] {
  val foo: String = parse(schema.foo)
  val bar: Option[Int] = parse(schema.bar)
  
- // You can put constraints either in the schema fields, or here directly
+ // Example constraint
  require(bar.forall(_ > 0), "bar must be positive")
 }
 
