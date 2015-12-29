@@ -5,7 +5,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 
 .. directly with
 
-* Interpretation & parsing
+* Interpretation
 * Migration & consolidation
 * Validation & sanitization
 
