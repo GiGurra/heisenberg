@@ -47,19 +47,19 @@ Below are some simple examples showing how to use Heisenberg
 val data = Map("a" -> "lalala", "b" -> 123, "extra_data" -> Seq(2,3,4))
 
 object MyType extends Schema[MyType] {
- val foo = required[String]("a", default = "foo_default") // Creates a Field of type String
- val bar = optional[Int]("b") // Creates a Field of type Int
+ val foo = required[String]("a", default = "foo_default")
+ val bar = optional[Int]("b")
 }
 
 case class MyType (source: Map[String, Any]) extends Parsed[MyType.type] {
- val foo = parse(schema.foo) // String
- val bar = parse(schema.bar) // Option[Int]
+ val foo: String = parse(schema.foo)
+ val bar: Option[Int] = parse(schema.bar)
  
  // You can put constraints either in the schema fields, or here directly
  require(bar.forall(_ > 0), "bar must be positive")
 }
 
-val instance = MyType.parse(data) // returns object of type MyType
+val instance: MyType = MyType.parse(data)
 
 ```
 
