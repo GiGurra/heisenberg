@@ -12,6 +12,7 @@ Think of your average data<->OO model mapper, but with:
 * [Type classes](https://twitter.github.io/scala_school/advanced-types.html) instead of reflection
 * No code generation (just pure Scala)
 * Custom arbitrary data validation (self-contained)
+* Seamless lossless transitions between static and dynamic data
 * Simple API
 
 
