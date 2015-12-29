@@ -10,7 +10,7 @@ Think of your standard data<->OO mapper, but with:
 * Fields of inconsistent types (e.g. x.a sometimes int, sometimes string)
 * Automatic data migration (field name changes, semantic changes etc.)
 * [Type classes](https://twitter.github.io/scala_school/advanced-types.html) instead of reflection
-* No annotations or code generation (just pure Scala)
+* No macros, annotations or code generation (just pure Scala)
 * Custom arbitrary data validation (self-contained)
 * Seamless lossless transitions between static and dynamic data
 * Simple API
