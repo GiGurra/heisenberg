@@ -1,24 +1,8 @@
 # Heisenberg
 A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, if there is no model, or you just don't care.
 
-## Heisenberg helps
+## Heisenberg makes dynamic easier to manage
 
-.. directly with
-
-* Interpretation
-* Migration & consolidation
-* Validation & sanitization
-
-.. and indirectly with
-
-* Statically typed manipulation
-* Persistence
-* Routing
-
-of evolving dynamic data
-
-
-## Key features
 * Selective parsing/validation without truncating source data
 * Mapping [key,value] <-> [your class] without loss of information
 * Support custom types & representations
@@ -28,6 +12,19 @@ of evolving dynamic data
 * No code generation (just pure Scala)
 * Custom arbitrary data validation (self-contained)
 * Simple API
+
+### This simplifies:
+
+* Interpretation
+* Migration 
+* Consolidation
+* Validation
+* sanitization
+.. and indirectly
+* Manipulation
+* Persistence
+* Routing
+* Parsing
 
 
 ## Compatibility
