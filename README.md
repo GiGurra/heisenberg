@@ -5,7 +5,7 @@ A scala library for handling dynamic and evolving [key,value] data when you're u
 
 Think of your standard data<->OO mapper, but with:
 
-* Selective parsing/validation without truncating source data
+* Selective mapping without truncating source data
 * Custom types & representations
 * Fields of inconsistent types (e.g. x.a sometimes int, sometimes string)
 * Automatic data migration (field name changes, semantic changes etc.)
