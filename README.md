@@ -1,7 +1,7 @@
 # Heisenberg
 A scala library for handling dynamic and evolving [key,value] data when you're uncertain about its model, if there is no model, or you just don't care.
 
-## Heisenberg makes dynamic easier to manage
+## Heisenberg makes dynamic data easier to manage
 
 Think of your average data<->OO model mapper, but with:
 
