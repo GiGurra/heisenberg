@@ -149,6 +149,21 @@ object TestTypes {
     }
   }
 
+  object OptionalField {
+
+    case class TestType(source: SourceData) extends Parsed[TestType.type] {
+      val foo = parse(schema.foo)
+      val bar = parse(schema.bar)
+      val foobar = parse(schema.foobar)
+    }
+
+    object TestType extends Schema[TestType] {
+      val foo = optional[String]("foo")
+      val bar = optional[String]("bar")
+      val foobar = required[Seq[Option[String]]]("foobar", default = Seq.empty)
+    }
+  }
+
 }
 
 object FailOnLoad {

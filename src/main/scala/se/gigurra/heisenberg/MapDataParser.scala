@@ -119,6 +119,17 @@ object MapDataParser {
     }
   }
 
+  implicit def parsingOption[T: MapDataParser : WeakTypeTag] = new MapDataParser[Option[T]] {
+    val elementTransformer = (d: Any) => MapDataParser.parse[T](d, "[option_element]")
+    def parse(field: Any) = {
+      field match {
+        case field: Option[_] => field.map(elementTransformer)
+        case null => None
+        case _ => Some(elementTransformer.apply(field))
+      }
+    }
+  }
+
   implicit def parsingEither[L: MapDataParser : WeakTypeTag, R: MapDataParser : WeakTypeTag] = new MapDataParser[Either[L, R]] {
     def parse(field: Any) = {
       Try(MapDataParser.parse[L](field, "[left_either]")) match {

@@ -58,7 +58,7 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
   //
 
   private def doFlatten(): Map[String, Any] = {
-    source ++ observed.map(v => v.name -> v.flatten)
+    (source ++ observed.map(v => v.name -> v.flatten)).filter(x => x._2 != null && x._2 != None)
   }
 
   private def parseOptField[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = {

@@ -35,7 +35,15 @@ class FieldOption[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: St
 
   def parse(data: SourceData, orElse: => Option[T]): Option[T] =
     data
-      .get(name).map(MapDataParser.parse[T](_, name))
+      .get(name)
+      .map {
+        case Some(x) => x
+        case None => null
+        case null => null
+        case x => x
+      }
+      .filter(_ != null)
+      .map(MapDataParser.parse[T](_, name))
       .orElse(default)
       .orElse(orElse)
 

@@ -183,6 +183,36 @@ class HeisenbergSpec
       instance1.foo shouldBe instance2.foo
     }
 
+    "support optionals as optionals and/or null" in {
+      import OptionalField._
+
+      val data1 = Map("foo" -> "my_foo", "bar" -> null, "foobar" -> Seq.empty)
+      val data2 = Map("foo" -> "my_foo", "bar" -> None, "foobar" -> Seq.empty)
+      val data3 = Map("foo" -> "my_foo", "foobar" -> Seq(Some("1"), None))
+      val data4 = Map("foo" -> "my_foo", "foobar" -> Seq(Some("1"), null, Some("3")))
+      val instance1 = TestType(data1)
+      val instance2 = TestType(data2)
+      val instance3 = TestType(data3)
+      val instance4 = TestType(data4)
+
+      instance1.bar shouldBe None
+      instance2.bar shouldBe None
+      instance3.bar shouldBe None
+      instance4.bar shouldBe None
+
+      instance3.foobar shouldBe Seq(Some("1"), None)
+      instance4.foobar shouldBe Seq(Some("1"), None, Some("3"))
+
+      val instance3b = TestType(instance3.flatten)
+      val instance4b = TestType(instance4.flatten)
+
+      instance3 shouldBe instance3b
+      instance4 shouldBe instance4b
+
+      instance1.flatten shouldBe (data1 - "bar")
+      instance2.flatten shouldBe (data2 - "bar")
+    }
+
     "support anonymous single field objects" should {
 
       "produce objects from correct input data" in {

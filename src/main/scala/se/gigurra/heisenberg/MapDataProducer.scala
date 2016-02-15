@@ -60,6 +60,14 @@ object MapDataProducer {
     }
   }
 
+  implicit def optionProducer[ElementType : MapDataProducer] = new MapDataProducer[Option[ElementType]] {
+    override def produce(t: Option[ElementType]): Any =  {
+      val transformer = implicitly[MapDataProducer[ElementType]]
+      val out = t.map(transformer.produce)
+      out.orNull
+    }
+  }
+
   implicit def eitherProducer[L : MapDataProducer, R : MapDataProducer] = new MapDataProducer[Either[L, R]] {
     override def produce(t: Either[L, R]): Any =  {
       t match {
