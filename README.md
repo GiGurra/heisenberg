@@ -324,7 +324,7 @@ As seen in the examples above - you need to provide a parser and producer ([type
 * Either[L: MapDataProducer : MapDataParser, R : MapDataProducer : MapDataParser]
 * Subclasses of Parsed (as in the examples above)
 * Option[T : MapDataProducer : MapDataParser] 
-  * Through the optional[T] schema keyword
+  * As above or Through the optional[T] schema keyword
 
 Parsers are instantiated at application load (As implicit Field parameters when your schemas are loaded by the classloader) and verified to exist in compile time. If you are missing one for your type - you will know when you compile your code.
 
@@ -346,7 +346,7 @@ Put a project dependency in your build.sbt. At some point I will push it to sona
 
 ```sbt
 
-.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.2.4"))
+.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.2.5"))
 
 ```
 
