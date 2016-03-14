@@ -19,6 +19,8 @@ class FieldRequired[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: 
       .orElse(orElse)
       .getOrElse(throw MapDataParser.MissingField(name = name, typ = implicitly[WeakTypeTag[T]].tpe.toString))
   }
+  
+  def getDefault: Option[T] = default
 
   def asOptional: FieldOption[T] = FieldOption[T](name)
 
@@ -49,6 +51,8 @@ class FieldOption[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: St
 
   def asOptional: FieldOption[T] = this
 
+  def getDefault: Option[T] = default
+  
   override def toString: String = s"$name: ${implicitly[WeakTypeTag[T]].tpe} <optional>"
 }
 
