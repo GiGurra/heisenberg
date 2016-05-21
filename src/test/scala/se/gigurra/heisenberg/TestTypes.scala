@@ -3,6 +3,9 @@ package se.gigurra.heisenberg
 import se.gigurra.heisenberg.MapData._
 import se.gigurra.heisenberg.Migration._
 
+import scala.collection.concurrent.TrieMap
+import scala.reflect.runtime.universe.WeakTypeTag
+
 /**
   * Created by kjolh on 12/27/2015.
   */
@@ -100,6 +103,25 @@ object TestTypes {
       val df = parse(schema.b)
     }
 
+  }
+
+  object GenericsTest {
+
+    case class MyType[T : WeakTypeTag : MapDataParser : MapDataProducer](source: SourceData = Map.empty) extends Parsed[MyTypeSchema[T]] {
+      val t = parse(schema.t)
+    }
+
+    object MyType {
+      private val schemas = new TrieMap[WeakTypeTag[_], MyTypeSchema[_]]()
+      implicit def schema[T: WeakTypeTag : MapDataParser : MapDataProducer]: MyTypeSchema[T] = {
+        schemas.getOrElseUpdate(implicitly[WeakTypeTag[T]], MyTypeSchema()).asInstanceOf[MyTypeSchema[T]]
+      }
+    }
+
+    case class MyTypeSchema[T : WeakTypeTag : MapDataParser : MapDataProducer]() extends Schema[MyType[T]] {
+      def apply(objectData: SourceData) = MyType.apply(objectData)
+      val t = required[T]("t")
+    }
   }
 
   object ParseFieldMoreThanOnceTest {

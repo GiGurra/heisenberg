@@ -115,6 +115,24 @@ class HeisenbergSpec
       instance.flatten shouldBe MapData(req_str -> "Hello", req_str_w_def -> "mydefault").source
     }
 
+    "Handle generic types" in {
+      import GenericsTest._
+      {
+        val schema = MyType.schema[Int]
+        import schema._
+        val source = MapData(t -> 42).source
+        val o = MyType[Int](source)
+        o.t shouldBe 42
+      }
+      {
+        val schema = MyType.schema[String]
+        import schema._
+        val source = MapData(t -> "s").source
+        val o = MyType[String](source)
+        o.t shouldBe "s"
+      }
+    }
+
     "flatten with default values recursively" in {
       import NestedTestType._
       import SimpleTestType._
