@@ -13,14 +13,14 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
   //  Ctor API
   //
 
-  private val observed = new ArrayBuffer[ObservedField[Any]]
+  private val observed = new ArrayBuffer[ObservedField[_]]
   private lazy val flattened: Map[String, Any] = doFlatten()
 
-  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = parseOptField(field, orElse)
-  protected def parse[FieldType : MapDataProducer](field: FieldOption[FieldType]): Option[FieldType] = parseOptField(field, None)
+  protected def parse[FieldType](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = parseOptField(field, orElse)
+  protected def parse[FieldType](field: FieldOption[FieldType]): Option[FieldType] = parseOptField(field, None)
 
-  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType], orElse: => FieldType): FieldType = parseReqField(field, Some(orElse))
-  protected def parse[FieldType : MapDataProducer](field: FieldRequired[FieldType]): FieldType = parseReqField(field, None)
+  protected def parse[FieldType](field: FieldRequired[FieldType], orElse: => FieldType): FieldType = parseReqField(field, Some(orElse))
+  protected def parse[FieldType](field: FieldRequired[FieldType]): FieldType = parseReqField(field, None)
 
 
   ////////////////////////////////////
@@ -61,15 +61,15 @@ abstract class Parsed[S <: Schema[_]](implicit val schema: S)
     (source ++ observed.map(v => v.name -> v.flatten)).filter(x => x._2 != null && x._2 != None)
   }
 
-  private def parseOptField[FieldType : MapDataProducer](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = {
+  private def parseOptField[FieldType](field: FieldOption[FieldType], orElse: => Option[FieldType]): Option[FieldType] = {
     val view = field.parse(source, orElse)
-    view.foreach(observed += ObservedField(_, field))
+    view.foreach(observed += ObservedField(_, field.name, field.mapDataProducer))
     view
   }
 
-  private def parseReqField[FieldType : MapDataProducer](field: FieldRequired[FieldType], orElse: => Option[FieldType]): FieldType = {
+  private def parseReqField[FieldType](field: FieldRequired[FieldType], orElse: => Option[FieldType]): FieldType = {
     val view = field.parse(source, orElse)
-    observed += ObservedField(view, field)
+    observed += ObservedField(view, field.name, field.mapDataProducer)
     view
   }
 
@@ -100,7 +100,6 @@ object Parsed {
 
 }
 
-case class ObservedField[+FieldType : MapDataProducer](view: FieldType, field: Field[Any]) {
-  def flatten: Any = MapDataProducer.produce(view)
-  def name: String = field.name
+case class ObservedField[FieldType](view: FieldType, name: String, mapDataProducer: MapDataProducer[FieldType]) {
+  def flatten: Any = mapDataProducer.produce(view)
 }

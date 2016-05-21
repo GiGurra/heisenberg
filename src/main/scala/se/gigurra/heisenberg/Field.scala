@@ -10,6 +10,10 @@ sealed trait Field[+T] {
 
 class FieldRequired[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: String, default: => Option[T] = None) extends Field[T] {
 
+  def mapDataParser: MapDataParser[T] = implicitly[MapDataParser[T]]
+
+  def mapDataProducer: MapDataProducer[T] = implicitly[MapDataProducer[T]]
+
   def -->(t: T): (String, Any) = name -> MapDataProducer.produce(t)
 
   def parse(data: SourceData, orElse: => Option[T]): T = {
@@ -32,6 +36,10 @@ object FieldRequired {
 }
 
 class FieldOption[T: WeakTypeTag : MapDataParser : MapDataProducer](val name: String, default: => Option[T] = None) extends Field[Option[T]] {
+
+  def mapDataParser: MapDataParser[T] = implicitly[MapDataParser[T]]
+
+  def mapDataProducer: MapDataProducer[T] = implicitly[MapDataProducer[T]]
 
   def -->(t: T): (String, Any) = name -> MapDataProducer.produce(t)
 

@@ -2,7 +2,7 @@ package se.gigurra.heisenberg
 
 import scala.language.implicitConversions
 
-trait MapDataProducer[T] {
+trait MapDataProducer[-T] {
   def produce(t: T): Any
 }
 
