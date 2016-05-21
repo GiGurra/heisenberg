@@ -4,12 +4,12 @@ organization := "se.gigurra"
 
 version := getVersion
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 
 libraryDependencies ++= Seq(
-  "org.scalatest"   %%  "scalatest"     % "2.2.4"       % "test",
+  "org.scalatest"   %%  "scalatest"     % "2.2.6"       % "test",
   "org.mockito"     %   "mockito-core"  % "1.10.19"     % "test",
   "org.scala-lang"  %   "scala-reflect" % scalaVersion.value
 )
