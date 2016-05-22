@@ -49,5 +49,3 @@ abstract class Schema[T <: Parsed[_] : WeakTypeTag] {
   }
 
 }
-
-case class InvalidSchemaUse(msg: String, cause: Throwable) extends RuntimeException(msg, cause)
