@@ -345,9 +345,7 @@ You can always override the default parser on both field and type level.
 Put a dependency in your build.sbt.
 
 ```sbt
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-libraryDependencies += "com.github.gigurra" %% "heisenberg" % "0.2.8-SNAPSHOT"
-
+libraryDependencies += "com.github.gigurra" %% "heisenberg" % "0.2.8"
 ```
 
 
