@@ -1,6 +1,6 @@
-package se.gigurra.heisenberg
+package com.github.gigurra.heisenberg
 
-import se.gigurra.heisenberg.MapData.SourceData
+import com.github.gigurra.heisenberg.MapData.SourceData
 
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe._

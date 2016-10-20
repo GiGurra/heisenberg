@@ -1,8 +1,8 @@
 name := "heisenberg"
 
-organization := "se.gigurra"
+organization := "com.github.gigurra"
 
-version := getVersion
+version := "0.2.8-SNAPSHOT"
 
 scalaVersion := "2.11.8"
 
@@ -15,13 +15,3 @@ libraryDependencies ++= Seq(
 )
 
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
-
-def getVersion: String = {
-  val v = scala.util.Properties.envOrNone("HEISENBERG_VERSION").getOrElse {
-    println(s"No 'HEISENBERG_VERSION' defined - defaulting to SNAPSHOT")
-    "SNAPSHOT"
-  }
-  println(s"Building Heisenbert v. $v")
-  v
-}
-

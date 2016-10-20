@@ -342,11 +342,11 @@ You can always override the default parser on both field and type level.
 
 ## Try it
 
-Put a project dependency in your build.sbt. At some point I will push it to sonatype/maven central as well.
+Put a dependency in your build.sbt.
 
 ```sbt
-
-.dependsOn(uri("git://github.com/GiGurra/heisenberg.git#0.2.7"))
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+libraryDependencies += "com.github.gigurra" %% "heisenberg" % "0.2.8-SNAPSHOT"
 
 ```
 

@@ -1,4 +1,4 @@
-package se.gigurra.heisenberg
+package com.github.gigurra.heisenberg
 
 trait FixErasure1[-T] {
 }

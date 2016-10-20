@@ -1,4 +1,4 @@
-package se.gigurra.heisenberg
+package com.github.gigurra.heisenberg
 
 trait MapProducer[T] {
   def produce(t: T): Map[String, Any]
