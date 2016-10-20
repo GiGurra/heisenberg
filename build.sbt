@@ -15,3 +15,6 @@ libraryDependencies ++= Seq(
 )
 
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
+
+pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toArray)
+
